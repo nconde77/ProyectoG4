@@ -1,9 +1,14 @@
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
+
 @ServerEndpoint("/Servidor")
 public class L350Servidor {
+	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
 	
 	@OnOpen
 	public void alAbrir(Session sesion) {
@@ -16,7 +21,12 @@ public class L350Servidor {
 		
 		try {
 			sesion.getBasicRemote().sendText("Hola Cliente " + sesion.getId() + "!");
-		}
+			for (Session s : sesiones) {
+				// if (!sesion.equals(s)) {
+					s.getBasicRemote().sendText(mensaje);
+				// }	// if
+			}	// for
+		}	// try
 		catch (IOException e) {
 			e.printStackTrace();
 		}
