@@ -6,7 +6,7 @@ public class Consultas {
 	 * Insertar un jugador.
 	 */
 	public String insertarJugador() {
-		return "INSER INTO Jugadores VALUES (?, ?, ?)";
+		return "INSER INTO Jugadores VALUES (?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
 	
 	/*

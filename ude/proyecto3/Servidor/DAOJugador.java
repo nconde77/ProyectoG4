@@ -33,7 +33,7 @@ public class DAOJugador {
 			System.out.println("Conexión a la base " + dbURL + " establecida.");
 		}
 		catch (SQLException e) {
-			System.out.println(e.getMessage());
+			System.out.println("Error al conectar a la base" + dbURL + ".\n" + e.getMessage());
 		}
 		finally {
 			return conn;
@@ -41,7 +41,7 @@ public class DAOJugador {
 	}	// conectar
 
 	
-	public void insertarJugador(String n, String c, int i) {
+	public void insertarJugador(Jugador j) throws FileNotFoundException, IOException {
 		Connection con = null;
 		String query;
 		PreparedStatement pstmt;
@@ -50,14 +50,15 @@ public class DAOJugador {
         	con = conectar();
             query = consul.insertarJugador();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, n);
-            pstmt.setString(2, c);
-            pstmt.setInt(3, i);
+            pstmt.setString(1, j.getNombre());
+            pstmt.setString(2, j.getCorreo());
+            pstmt.setInt(3, j.getId());
+            pstmt.setLong(4, j.getPuntaje());
             pstmt.executeUpdate();
             pstmt.close();
         }
         catch (SQLException e) {
-            throw new PersistenciaException("Error al intentar agregar una revision",e);
+            System.out.println("Error al insertar un jugador.\n" + e.getMessage());
         }
 	}	// insertarJugador
 }	/* DAOJugador */
