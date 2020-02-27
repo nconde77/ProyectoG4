@@ -1,5 +1,6 @@
 package ude.proyecto3.Servidor;
 
+
 public class Jugador {
 	private String nombre, correo;
 	long puntaje;

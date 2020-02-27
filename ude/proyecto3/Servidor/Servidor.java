@@ -12,7 +12,6 @@ import java.util.Properties;
 import java.util.Set;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import ude.proyecto3.Servidor.DAOJugador;
 
 
 @ServerEndpoint("/Servidor")
