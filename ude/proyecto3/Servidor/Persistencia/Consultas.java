@@ -10,16 +10,30 @@ public class Consultas {
 	}	// darUsuarioPorNombre
 	
 	/*
+	 * Eliminar un jugador.
+	 */
+	public String eliminarJugador() {
+		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
+	}	// darUsuarioPorNombre
+	
+	/*
 	 * Buscar un usuario por su nombre.
 	 */
-	public String darUsuarioPorNombre() {
-		return "SELECT * FROM Usuarios WHERE Nombre = ?";
+	public String darJugadorPorNombre() {
+		return "SELECT * FROM Usuarios WHERE Nombre = UPPER(TRIM(?))";
+	}	// darUsuarioPorNombre
+	
+	/*
+	 * Buscar un usuario por su nombre.
+	 */
+	public String listarJugadores() {
+		return "SELECT Id,Nombre FROM Jugadores ORDER BY Id";
 	}	// darUsuarioPorNombre
 	
 	/*
 	 * Dados los dos usuarios que jugaban, retorna su partida.
 	 */
-	public String darPartidaPorUsuarios() {
+	public String darPartidaPorJugadoress() {
 		return "SELECT * FROM Partidas WHERE Juagdor1 = ? AND Jugador2 = ?";
 	}	// darPartidaPorUsuarios
 	
