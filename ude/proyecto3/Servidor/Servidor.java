@@ -17,18 +17,21 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint("/Servidor")
 public class Servidor {
 	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
-	private String db_driver, db_url;
+	private String cataHome, db_driver, db_url;
 	
 	public Servidor() throws FileNotFoundException, IOException {
+		cataHome = System.getProperty("catalina.home");
 		Properties configuracion = new Properties();
-		configuracion.load (new FileInputStream ("./servidor.config"));
-		db_driver = configuracion.getProperty(db_driver);
-		db_url = configuracion.getProperty(db_url);
+		configuracion.load (new FileInputStream (cataHome + "/webapps/servidor/WEB-INF/classes/servidor.config"));
+		db_driver = configuracion.getProperty("db_driver");
+		db_url = configuracion.getProperty("db_url");
 	}
 
 	@OnOpen
 	public void alAbrir(Session sesion) {
 		System.out.println("Abriendo sesión " + sesion.getId() + ".");
+		System.err.println("Abriendo sesión " + sesion.getId() + ".");
+		sesiones.add(sesion);
 	}	// alAbrir
 	
 	@OnMessage
@@ -56,6 +59,7 @@ public class Servidor {
 	@OnClose
 	public void alCerrar(Session sesion) {
 		System.out.println("Cerrando sesión " + sesion.getId() + ".");
+		sesiones.remove(sesion);
 	}	// alCerrar
 	
 }

@@ -9,4 +9,7 @@ import ude.proyecto3.Servidor.Logica.Pesquero;
  * 
  */
 public class PesqueroLiviano extends Pesquero {
+	public PesqueroLiviano(int c, int x, int y, float a, float v) {
+		super(c, x, y, a, v);
+	}
 }	/* PesqueroLiviano */

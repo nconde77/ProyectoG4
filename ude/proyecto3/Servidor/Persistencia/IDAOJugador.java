@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import ude.proyecto3.Servidor.Jugador;
+import ude.proyecto3.Servidor.Logica.Jugador;
 
 
 public interface IDAOJugador {

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 //import java.util.List;
 //import java.util.Properties;
 
-import ude.proyecto3.Servidor.Jugador;
+import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 

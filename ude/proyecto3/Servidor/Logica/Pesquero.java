@@ -10,7 +10,7 @@ public abstract class Pesquero {
 	private int carga, posX, posY;
 	private float ang, vel;
 	
-	public Pesquero(int c=0; int x=0, int y=0, float a=0, float v=0) {
+	public Pesquero(int c, int x, int y, float a, float v) {
 		ang   = a;
 		vel   = v;
 		carga = c;
@@ -18,23 +18,23 @@ public abstract class Pesquero {
 		posY  = y;
 	}	// Pesquero
 	
-	public int getCarga {
+	public int getCarga() {
 		return carga;
 	}	// getPosX
 	
-	public int getPosX {
+	public int getPosX() {
 		return posX;
 	}	// getPosX
 	
-	public int getPosY {
+	public int getPosY() {
 		return posY;
 	}	// getPosY
 	
-	public float getAngulo {
+	public float getAngulo() {
 		return ang;
 	}	// getAngulo
 	
-	public getVelocidad {
+	public float getVelocidad() {
 		return vel;
 	}	// getVelocidad
 	
