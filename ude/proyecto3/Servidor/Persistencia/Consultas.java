@@ -6,7 +6,7 @@ public class Consultas {
 	 * Insertar un jugador.
 	 */
 	public String insertarJugador() {
-		return "INSER INTO Jugadores VALUES (?, ?, ?, ?)";
+		return "INSERT INTO Jugadores VALUES (?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
 	
 	/*
@@ -41,7 +41,19 @@ public class Consultas {
 	 * Insertar id, nombre, jugador1 y jugador2 de una partida.
 	 */
 	public String guardarPartida() {
-		return "INSERT INTO Partidas VALUES (?, ?, ?)";
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}	// guardarPartida
 	
+	public String guardarPesqueroFabrica() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?)"; 
+	}
+	public String guardarPesqueroLigero() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?)"; 
+	}
+	public String guardarOPVPesado() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
+	}
+	public String guardarOPVLigero() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
+	}
 }	//	Consultas
