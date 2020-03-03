@@ -39,11 +39,10 @@ public class Servidor {
 		System.out.println("Mensaje de " + sesion.getId() + ". Texto: " + mensaje);
 		
 		try {
-			sesion.getBasicRemote().sendText("Hola Cliente " + sesion.getId() + "!");
 			for (Session s : sesiones) {
-				// if (!sesion.equals(s)) {
+				if (!sesion.equals(s)) {
 					s.getBasicRemote().sendText(mensaje);
-				// }	// if
+				}	// if
 			}	// for
 		}	// try
 		catch (IOException e) {
