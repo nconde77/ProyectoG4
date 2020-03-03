@@ -1,61 +1,23 @@
 package ude.proyecto3.Servidor.Logica;
 
-/*
- * Pesquero.
- * 
- * Clase abstracta para derivar de ella los buques pesqueros.
- * 
- */
-public abstract class Pesquero {
-	private int carga, posX, posY;
-	private float ang, vel;
+import ude.proyecto3.Servidor.Logica.Vehiculo;
+
+public class Pesquero extends Vehiculo {
+	private int energia;
 	
-	public Pesquero(int c, int x, int y, float a, float v) {
-		ang   = a;
-		vel   = v;
-		carga = c;
-		posX  = x;
-		posY  = y;
-	}	// Pesquero
+	public Pesquero(int id,long angulo, long rotacion, long posx, long posy, int ener)
+	{
+		super (id,angulo,rotacion,posx,posy);
+		
+		energia = 0;
+	}	
+		public void setEnergia(int ener) {
+			if (ener != 0) {
+				energia=ener;
+			}	// if
+		}	// setJugadorPesquero
+		public int getEnergia() {
+		return energia;
+	}
 	
-	public int getCarga() {
-		return carga;
-	}	// getPosX
-	
-	public int getPosX() {
-		return posX;
-	}	// getPosX
-	
-	public int getPosY() {
-		return posY;
-	}	// getPosY
-	
-	public float getAngulo() {
-		return ang;
-	}	// getAngulo
-	
-	public float getVelocidad() {
-		return vel;
-	}	// getVelocidad
-	
-	public void setCarga(int c) {
-		carga = c;
-	}	// setcarga
-	
-	public void setPosX(int x) {
-		posX = x;
-	}	// setPosX
-	
-	public void setPosY(int y) {
-		posY = y;
-	}	// setPosY
-	
-	public void setAngulo(float a) {
-		ang = a;
-	}	// setAngulo
-	
-	public void setVelocidad(float v) {
-		vel = v;
-	}	// setVelocidad
-	
-}	/* Pesquero */
+}

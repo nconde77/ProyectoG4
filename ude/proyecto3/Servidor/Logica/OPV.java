@@ -1,10 +1,11 @@
 package ude.proyecto3.Servidor.Logica;
 
-/*
- * OPV.
- * 
- * Clase abstracta para derivar de ella los OPVs (Offshore Patrol Vehicle).
- * 
- */
-public abstract class OPV {
-}	/* OPV */
+import ude.proyecto3.Servidor.Logica.Vehiculo;
+
+public class OPV extends Vehiculo {
+
+	public OPV(int id,long angulo, long rotacion, long posx, long posy)
+	{
+		super (id,angulo,rotacion,posx,posy);		
+	}
+}
