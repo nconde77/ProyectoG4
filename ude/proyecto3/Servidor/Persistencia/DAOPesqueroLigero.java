@@ -23,35 +23,14 @@ import ude.proyecto3.Servidor.Logica.PesqueroLigero;
 public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 	private Consultas consul;
 	
-	public static Connection conectar() throws FileNotFoundException, IOException {
-		String dbDriver, dbURL;
-		Connection conn = null;
-		Properties configuracion = new Properties();
-		
-		configuracion.load (new FileInputStream ("./servidor.config"));
-		dbDriver = configuracion.getProperty("db_driver");
-		dbURL = configuracion.getProperty("db_url");
-		
-		try {
-			conn = DriverManager.getConnection(dbURL);
-			System.out.println("Conexión a la base " + dbURL + " establecida.");
-		}
-		catch (SQLException e) {
-			System.out.println("Error al conectar a la base" + dbURL + ".\n" + e.getMessage());
-		}
-		finally {
-			return conn;
-		}	// try-catch-finally
-	}	// conectar
-
-	
-	public void guardarPesqueroLigero(PesqueroLigero p) throws FileNotFoundException, IOException {
-		Connection con = null;
+	@Override
+	public void guardar(IConexion icon, PesqueroLigero p) throws FileNotFoundException, IOException, SQLException {
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
 		String query;
 		PreparedStatement pstmt;
-		Jugador j;
+		
         try {
-        	con = conectar(); 
             query = consul.guardarPesqueroLigero();
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1, p.getId()); 
@@ -66,7 +45,11 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
         catch (SQLException e) {
             System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
         }
+        finally {
+        	con.close();
+        }
 	}
+	
 	//Agregado
 	public boolean miembro(IConexion icon, int i) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
@@ -82,7 +65,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.darPorId();
+    	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
     	pstmt.setString(1, "PesqueroLigero");
     	pstmt.setInt(2, i);

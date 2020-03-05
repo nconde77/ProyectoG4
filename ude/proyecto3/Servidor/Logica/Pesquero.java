@@ -2,13 +2,12 @@ package ude.proyecto3.Servidor.Logica;
 
 import ude.proyecto3.Servidor.Logica.Vehiculo;
 
-public class Pesquero extends Vehiculo {
+public abstract class Pesquero extends Vehiculo {
 	private int energia;
 	
-	public Pesquero(int id,long angulo, long rotacion, long posx, long posy, int ener)
+	public Pesquero(int id, float angulo, float rotacion, float posx, float posy, int ener)
 	{
-		super (id,angulo,rotacion,posx,posy);
-		
+		super (id, angulo, rotacion, posx, posy);
 		energia = 0;
 	}	
 		public void setEnergia(int ener) {

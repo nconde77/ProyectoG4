@@ -2,9 +2,9 @@ package ude.proyecto3.Servidor.Logica;
 
 public class PesqueroFabrica extends Pesquero {
 	
-	public PesqueroFabrica(int id,long angulo, long rotacion, long posx, long posy, int energia)
+	public PesqueroFabrica(int id, float a, float r, float posx, float posy, int e)
 	{
-		super (id,angulo,rotacion,posx,posy,energia);		
+		super (id, a, r, posx, posy, e);		
 	}
 
 }

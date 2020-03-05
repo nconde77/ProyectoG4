@@ -1,6 +1,6 @@
 package ude.proyecto3.Servidor.Logica;
 
-public class Vehiculo {
+public abstract class Vehiculo {
 
 	private float angulo, rotacion, posX, posY;
 	private int id;//,energia;
