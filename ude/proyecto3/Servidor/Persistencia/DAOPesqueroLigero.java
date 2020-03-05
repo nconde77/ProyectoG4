@@ -16,7 +16,8 @@ import java.util.Properties;
 
 import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
-import ude.proyecto3.Servidor.Logica.Pesquero;
+import ude.proyecto3.Servidor.Logica.PesqueroLigero;
+//import ude.proyecto3.Servidor.Persistencia.IDAOPesqueroLigero;
 //import ude.proyecto3.Servidor;
 
 public class DAOPesqueroLigero implements IDAOPesqueroLigero {
@@ -44,7 +45,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 	}	// conectar
 
 	
-	public void guardarPesqueroLigero(Pesquero p) throws FileNotFoundException, IOException {
+	public void guardarPesqueroLigero(PesqueroLigero p) throws FileNotFoundException, IOException {
 		Connection con = null;
 		String query;
 		PreparedStatement pstmt;
@@ -63,11 +64,11 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
             pstmt.close();
         }
         catch (SQLException e) {
-            System.out.println("Error al insertar un jugador.\n" + e.getMessage());
+            System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
         }
 	}
 	//Agregado
-	public boolean miembro(IConexion icon, String n) throws SQLException {
+	public boolean miembro(IConexion icon, int i) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -81,9 +82,10 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.darJugadorPorNombre();
+    	query = consul.darPorId();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, n);
+    	pstmt.setString(1, "PesqueroLigero");
+    	pstmt.setInt(2, i);
     	rs = pstmt.executeQuery();
     	esMiembro = rs.isBeforeFirst();
     	rs.close();
@@ -95,7 +97,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public Pesquero encontrar(IConexion icon, String n) throws SQLException {
+	public PesqueroLigero encontrar(IConexion icon, int n) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -103,28 +105,34 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 		PreparedStatement pstmt;
 		ResultSet rs;
 		String query;
-        Jugador j = null;
+        //Jugador j = null;
+        PesqueroLigero p = null;
         
         if (con == null) {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.darJugadorPorNombre();
+    	query = consul.encontrarPesquero();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, n);
+        pstmt.setString(1, "PesqueroLigero");
+        pstmt.setInt(2, n);
     	rs = pstmt.executeQuery();
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
+    	//super (id,angulo,rotacion,posx,posy,energia);	
     	if (rs.next()) {
-    		j = new Jugador(rs.getString("Nombre"), 
-    				rs.getString("Correo"),
-    				rs.getInt("Id"));
-    		j.sumarPuntos(rs.getLong("Puntaje"));
+    		p = new PesqueroLigero(rs.getInt("id"), 
+    				rs.getFloat("angulo"),
+    				rs.getFloat("rotacion"),
+    				rs.getFloat("posx"),
+    				rs.getFloat("posy"),
+    				rs.getInt("energia"));
+    		//j.sumarPuntos(rs.getLong("Puntaje"));
     	}
     	rs.close();
     	pstmt.close();
         
-        return j;
+        return p;
 	}	// encontrar
 	
 	/*
@@ -132,7 +140,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
 	@Override
-	public void borrar(IConexion icon, String s) throws SQLException {
+	public void borrar(IConexion icon, int i) throws SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 
@@ -140,14 +148,15 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 		PreparedStatement pstmt;
 		
         try {
-            query = consul.eliminarJugador();
+            query = consul.eliminarPesquero();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, s);
+            pstmt.setString(1, "PesqueroLigero");
+            pstmt.setInt(2, i);
             pstmt.executeUpdate();
             pstmt.close();
         }
         catch (SQLException e) {
-            System.out.println("Error al insertar un jugador.\n" + e.getMessage());
+            System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
         }
         finally {
             con.close();
@@ -173,8 +182,9 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }	// if
         
-        query = consul.listarJugadores();
+        query = consul.listarPesquero();
     	pstmt = con.prepareStatement(query);
+    	pstmt.setString(1, "PesqueroLigero");
     	rs = pstmt.executeQuery();
     	aux = !(rs.isBeforeFirst());
     	rs.close();

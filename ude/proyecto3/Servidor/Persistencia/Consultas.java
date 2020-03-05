@@ -33,8 +33,8 @@ public class Consultas {
 	/*
 	 * Dados los dos usuarios que jugaban, retorna su partida.
 	 */
-	public String darPartidaPorJugadoress() {
-		return "SELECT * FROM Partidas WHERE Juagdor1 = ? AND Jugador2 = ?";
+	public String darPartidaPorJugadores() {
+		return "SELECT * FROM Partidas WHERE Jugador1 = ? AND Jugador2 = ?";
 	}	// darPartidaPorUsuarios
 	
 	/*
@@ -56,4 +56,27 @@ public class Consultas {
 	public String guardarOPVLigero() {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
 	}
+	public String encontrarPesquero() {
+		return "SELECT * FROM ? WHERE id = ?"; 
+	}
+//	public String eliminarPesqueroLigero() {
+//		return "DELETE FROM PesqueroLigero WHERE id = TRIM(?)";
+//	}
+	public String listarPesquero() {
+		return "SELECT Id FROM ? ORDER BY Id";
+	}
+//	public String encontrarPesqueroFabrica() {
+//		return "SELECT * FROM PesqueroFabrica WHERE id = ?"; 
+//	}
+	public String eliminarPesquero() {
+		return "DELETE FROM ? WHERE id = TRIM(?)";
+	}
+//	public String listarPesqueroFabrica() {
+//		return "SELECT Id FROM PesqueroFabrica ORDER BY Id";
+//	}
+
+	public String darPorId() {
+		return "SELECT * FROM ? WHERE id = ?";
+	}
+	
 }	//	Consultas
