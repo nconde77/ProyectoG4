@@ -23,35 +23,15 @@ import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 public class DAOPartida implements IDAOPartida {
 	private Consultas consul;
 	
-	public static Connection conectar() throws FileNotFoundException, IOException {
-		String dbDriver, dbURL;
-		Connection conn = null;
-		Properties configuracion = new Properties();
-		
-		configuracion.load (new FileInputStream ("./servidor.config"));
-		dbDriver = configuracion.getProperty("db_driver");
-		dbURL = configuracion.getProperty("db_url");
-		
-		try {
-			conn = DriverManager.getConnection(dbURL);
-			System.out.println("Conexión a la base " + dbURL + " establecida.");
-		}
-		catch (SQLException e) {
-			System.out.println("Error al conectar a la base" + dbURL + ".\n" + e.getMessage());
-		}
-		finally {
-			return conn;
-		}	// try-catch-finally
-	}	// conectar
-
-	
-	public void guardarPartida(Partida p) throws FileNotFoundException, IOException {
-		Connection con = null;
+	public void guardarPartida(IConexion icon, Partida p) throws FileNotFoundException, IOException {
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con;
 		String query;
 		PreparedStatement pstmt;
 		Jugador j;
+		
         try {
-        	con = conectar(); 
+        	con = conSQLite.getConexion(); 
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
             pstmt.setInt(1, p.getJPatId()); //guardo Id patrulla
@@ -67,9 +47,7 @@ public class DAOPartida implements IDAOPartida {
         catch (SQLException e) {
             System.out.println("Error al insertar un jugador.\n" + e.getMessage());
         }
-	}
-
-// AGREGADO !!!!!!!!!!!!!!!!!!!!!!!!!!!
+	}	// guardarPartida
 
 	public boolean miembro(IConexion icon, int j1, int j2) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
@@ -100,7 +78,7 @@ public class DAOPartida implements IDAOPartida {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public PesqueroFabrica encontrar(IConexion icon, int n) throws SQLException {
+	public Partida encontrar(IConexion icon, int n) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -108,35 +86,34 @@ public class DAOPartida implements IDAOPartida {
 		PreparedStatement pstmt;
 		ResultSet rs;
 		String query;
-        //Jugador j = null;
-        PesqueroFabrica p = null;
+        Partida p = null;
         
         if (con == null) {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.encontrarPesquero();
+    	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
-        pstmt.setString(1, "PesqueroFabrica");
+        pstmt.setString(1, "Partidas");
         pstmt.setInt(2, n);
     	rs = pstmt.executeQuery();
   	
   	// Si el jugador existe se crea el objeto y se lo devuelve.
   	//super (id,angulo,rotacion,posx,posy,energia);	
   	if (rs.next()) {
-  		p = new PesqueroFabrica(rs.getInt("id"), 
+  		/*p = new PesqueroFabrica(rs.getInt("id"), 
   				rs.getFloat("angulo"),
   				rs.getFloat("rotacion"),
   				rs.getFloat("posx"),
   				rs.getFloat("posy"),
-  				rs.getInt("energia"));
-  		//j.sumarPuntos(rs.getLong("Puntaje"));
+  				rs.getInt("energia")); */
   	}
   	rs.close();
   	pstmt.close();
+  	con.close();
       
-      return p;
-	}	// encontrar
+    return p;
+}	// encontrar
 	
 	/*
 	 * Eliminar un jugador por nombre.
@@ -196,5 +173,4 @@ public class DAOPartida implements IDAOPartida {
       return aux;
 	}	// esVacio
 
-
-}
+}	/* DAOPartida */

@@ -75,7 +75,7 @@ public class Consultas {
 //		return "SELECT Id FROM PesqueroFabrica ORDER BY Id";
 //	}
 
-	public String darPorId() {
+	public String encontrarPorId() {
 		return "SELECT * FROM ? WHERE id = ?";
 	}
 	
