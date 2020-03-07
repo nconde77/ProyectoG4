@@ -1,39 +1,55 @@
 package ude.proyecto3.Servidor.Logica;
 
+import java.sql.SQLException;
+
 import ude.proyecto3.Servidor.Logica.EstadoPartida;
+import ude.proyecto3.Servidor.Persistencia.DAOJugador;
 
 public class Partida {
 
+	//private Jugador jug;
+	//, jPes;
 	private Jugador jPat, jPes;
+	private DAOJugador daoj;
 	private long Id;
 	private int ptosJPat, ptosJPes, combusJPes, combusJPat, cantPeces, Tiempo;
 	private EstadoPartida Estado;
 	//private OPV;
-	public Partida(Jugador jPat, Jugador jPes, long id, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) {
-		jPat = jPes = null;
+	public Partida(String nomUsu, String bando, long id, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException {
+		if (bando == "Pesquero" ){
+			jPes = setJugadorPatrullero(nomUsu);
+		} 
+		else {
+			jPat = setJugadorPatrullero(nomUsu);
+		}
+		//jPes = setJugadorPatrullero(nomPes);
 		ptosJPat = ptosJPes = 0;
+		
 		id = -1;
+		
 		estado = EstadoPartida.CREADA;
 	}	// Partida
 	
-	public void setJugadorPatrullero(Jugador j) {
+	public Jugador setJugadorPatrullero(String j) throws SQLException {
 		if (j != null) {
-			jPat = j;
+			return daoj.encontrar(null, j);
 		}	// if
+		else return null;
 	}	// setJugadorPatrullero
 	
-	public void setJugadorPesqueros(Jugador j) {
+	public Jugador setJugadorPesqueros(String j) throws SQLException {
 		if (j != null) {
-			jPes = j;
+			return daoj.encontrar(null, j);
 		}	// if
-	}	// setJugadorPatrullero
+		else return null;
+	}	// setJugadorPesquero
 	
-
 	public void setPtosJPat(int ptos) {
 		if (ptos != 0) {
 			ptosJPat= ptos;
 		}	// if
 	}	// setPtosJPat
+	
 	
 	public void setPtosJPes(int ptos) {
 		if (ptos != 0) {
@@ -75,12 +91,27 @@ public class Partida {
 		Estado = EstadoPartida.EN_CURSO;
 	}
 	
-	public int  getJPatId() {
-		return jPat.getId();
+//	public int  getJId(String bando) {
+//		if (bando == "Pesquero" ){
+//			return jPes.getId();
+//		} 
+//		else {
+//			return jPat.getId();
+//		}
+//		
+//	}
+	
+//	public int getJPesId() {
+//		return jPes.getId();
+//	}
+	public Jugador getJpat() {
+		return jPat;	// if
 	}
-	public int getJPesId() {
-		return jPes.getId();
+	
+	public Jugador getJpes() {
+		return jPes;	// if
 	}
+	
 	public long getId() {
 		return Id;
 	}
@@ -108,4 +139,5 @@ public class Partida {
 	public int getTiempo() {
 		return Tiempo;
 	}
+	
 }
