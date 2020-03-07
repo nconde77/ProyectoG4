@@ -34,8 +34,8 @@ public class DAOPartida implements IDAOPartida {
         	con = conSQLite.getConexion(); 
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
-            pstmt.setInt(1, p.getJPatId()); //guardo Id patrulla
-            pstmt.setInt(2, p.getJPesId()); //guardo Id pesquero
+ //           pstmt.setInt(1, p.getJPatId()); //guardo Id patrulla
+ //           pstmt.setInt(2, p.getJPesId()); //guardo Id pesquero
             pstmt.setLong(3, p.getId());
             pstmt.setLong(4, p.getPtosJPat());
             pstmt.setLong(5, p.getPtosJPes());
