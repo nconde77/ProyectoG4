@@ -3,20 +3,21 @@ package ude.proyecto3.Servidor.Logica;
 import java.sql.SQLException;
 
 import ude.proyecto3.Servidor.Logica.EstadoPartida;
-import ude.proyecto3.Servidor.Persistencia.DAOJugador;
+import ude.proyecto3.Servidor.Persistencia.DAOJugadorSQLite;
 
 public class Partida {
 
 	//private Jugador jug;
 	//, jPes;
 	private Jugador jPat, jPes;
-	private DAOJugador daoj;
+	private DAOJugadorSQLite daoj;
 	private long Id;
 	private int ptosJPat, ptosJPes, combusJPes, combusJPat, cantPeces, Tiempo;
 	private EstadoPartida Estado;
 	//private OPV;
+	
 	public Partida(String nomUsu, String bando, long id, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException {
-		if (bando == "Pesquero" ){
+		if (bando == "Pesquero" ) {
 			jPes = setJugadorPatrullero(nomUsu);
 		} 
 		else {
@@ -91,25 +92,12 @@ public class Partida {
 		Estado = EstadoPartida.EN_CURSO;
 	}
 	
-//	public int  getJId(String bando) {
-//		if (bando == "Pesquero" ){
-//			return jPes.getId();
-//		} 
-//		else {
-//			return jPat.getId();
-//		}
-//		
-//	}
-	
-//	public int getJPesId() {
-//		return jPes.getId();
-//	}
 	public Jugador getJpat() {
-		return jPat;	// if
+		return jPat;
 	}
 	
 	public Jugador getJpes() {
-		return jPes;	// if
+		return jPes;
 	}
 	
 	public long getId() {
@@ -140,4 +128,4 @@ public class Partida {
 		return Tiempo;
 	}
 	
-}
+}	/* Partida */

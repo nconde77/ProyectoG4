@@ -16,40 +16,37 @@ import java.util.Properties;
 
 import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
-import ude.proyecto3.Servidor.Logica.PesqueroLigero;
-//import ude.proyecto3.Servidor.Persistencia.IDAOPesqueroLigero;
-//import ude.proyecto3.Servidor;
+import ude.proyecto3.Servidor.Persistencia.IDAOPesqueroFabrica;
+import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 
-public class DAOPesqueroLigero implements IDAOPesqueroLigero {
+
+public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 	private Consultas consul;
 	
+	
 	@Override
-	public void guardar(IConexion icon, PesqueroLigero p) throws FileNotFoundException, IOException, SQLException {
+	public void guardar(IConexion icon, PesqueroFabrica p) throws FileNotFoundException, IOException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
-		Connection con = conSQLite.getConexion();
 		String query;
 		PreparedStatement pstmt;
 		
-        try {
-            query = consul.guardarPesqueroLigero();
-            pstmt = con.prepareStatement(query);
-            pstmt.setInt(1, p.getId()); 
-            pstmt.setFloat(2, p.getAngulo()); 
-            pstmt.setFloat(3, p.getRotacion());
-            pstmt.setFloat(4, p.getPosY());
-            pstmt.setFloat(5, p.getPosX());
-            pstmt.setInt(6, p.getEnergia());
-            pstmt.executeUpdate();
-            pstmt.close();
-        }
-        catch (SQLException e) {
-            System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
-        }
-        finally {
-        	con.close();
-        }
+		try {
+			Connection con = conSQLite.getConexion();
+          query = consul.guardarPesqueroFabrica();
+          pstmt = con.prepareStatement(query);
+          pstmt.setInt(1, p.getId()); 
+          pstmt.setFloat(2, p.getAngulo()); 
+          pstmt.setFloat(3, p.getRotacion());
+          pstmt.setFloat(4, p.getPosY());
+          pstmt.setFloat(5, p.getPosX());
+          pstmt.setInt(6, p.getEnergia());
+          pstmt.executeUpdate();
+          pstmt.close();
+      }
+      catch (SQLException e) {
+          System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
+      }
 	}
-	
 	//Agregado
 	public boolean miembro(IConexion icon, int i) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
@@ -80,7 +77,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public PesqueroLigero encontrar(IConexion icon, int n) throws SQLException {
+	public PesqueroFabrica encontrar(IConexion icon, int n) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -89,7 +86,7 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 		ResultSet rs;
 		String query;
         //Jugador j = null;
-        PesqueroLigero p = null;
+        PesqueroFabrica p = null;
         
         if (con == null) {
         	throw new SQLException("No hay conexiones disponibles.");
@@ -97,25 +94,25 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
         
     	query = consul.encontrarPesquero();
     	pstmt = con.prepareStatement(query);
-        pstmt.setString(1, "PesqueroLigero");
+        pstmt.setString(1, "PesqueroFabrica");
         pstmt.setInt(2, n);
     	rs = pstmt.executeQuery();
-    	
-    	// Si el jugador existe se crea el objeto y se lo devuelve.
-    	//super (id,angulo,rotacion,posx,posy,energia);	
-    	if (rs.next()) {
-    		p = new PesqueroLigero(rs.getInt("id"), 
-    				rs.getFloat("angulo"),
-    				rs.getFloat("rotacion"),
-    				rs.getFloat("posx"),
-    				rs.getFloat("posy"),
-    				rs.getInt("energia"));
-    		//j.sumarPuntos(rs.getLong("Puntaje"));
-    	}
-    	rs.close();
-    	pstmt.close();
-        
-        return p;
+  	
+  	// Si el jugador existe se crea el objeto y se lo devuelve.
+  	//super (id,angulo,rotacion,posx,posy,energia);	
+  	if (rs.next()) {
+  		p = new PesqueroFabrica(rs.getInt("id"), 
+  				rs.getFloat("angulo"),
+  				rs.getFloat("rotacion"),
+  				rs.getFloat("posx"),
+  				rs.getFloat("posy"),
+  				rs.getInt("energia"));
+  		//j.sumarPuntos(rs.getLong("Puntaje"));
+  	}
+  	rs.close();
+  	pstmt.close();
+      
+      return p;
 	}	// encontrar
 	
 	/*
@@ -130,20 +127,20 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 		String query;
 		PreparedStatement pstmt;
 		
-        try {
-            query = consul.eliminarPesquero();
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, "PesqueroLigero");
-            pstmt.setInt(2, i);
-            pstmt.executeUpdate();
-            pstmt.close();
-        }
-        catch (SQLException e) {
-            System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
-        }
-        finally {
-            con.close();
-        }
+      try {
+          query = consul.eliminarPesquero();
+          pstmt = con.prepareStatement(query);
+          pstmt.setString(1, "PesqueroFabrica");
+          pstmt.setInt(2, i);
+          pstmt.executeUpdate();
+          pstmt.close();
+      }
+      catch (SQLException e) {
+          System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
+      }
+      finally {
+          con.close();
+      }
 	}	// borrar
 	
 	/*
@@ -159,22 +156,21 @@ public class DAOPesqueroLigero implements IDAOPesqueroLigero {
 		PreparedStatement pstmt;
 		ResultSet rs;
 		String query;
-        boolean aux = true;
-        
-        if (con == null) {
-        	throw new SQLException("No hay conexiones disponibles.");
-        }	// if
-        
-        query = consul.listarPesquero();
-    	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, "PesqueroLigero");
-    	rs = pstmt.executeQuery();
-    	aux = !(rs.isBeforeFirst());
-    	rs.close();
-    	pstmt.close();
-        
-        return aux;
+      boolean aux = true;
+      
+      if (con == null) {
+      	throw new SQLException("No hay conexiones disponibles.");
+      }	// if
+      
+    query = consul.listarPesquero();
+  	pstmt = con.prepareStatement(query);
+  	pstmt.setString(1, "PesqueroFabrica");
+  	rs = pstmt.executeQuery();
+  	aux = !(rs.isBeforeFirst());
+  	rs.close();
+  	pstmt.close();
+      
+      return aux;
 	}	// esVacio
 
-
-}
+}	/* DAOPesqueroFabrica  */
