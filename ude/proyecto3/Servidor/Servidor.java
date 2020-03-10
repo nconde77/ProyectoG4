@@ -78,12 +78,8 @@ public class Servidor {
 	public void cuandoMensaje(Session sesion, String mensaje) throws FileNotFoundException, SQLException, IOException {
 		JsonParser jParse = new JsonParser();
 		JsonObject jObj;;
+		
 
-		/* for (Session s : sesiones) {
-			if (!sesion.equals(s)) {
-				s.getBasicRemote().sendText(mensaje);
-			}	// if
-		}	// for */
 		jObj = jParse.parse(mensaje).getAsJsonObject();
 		switch (jObj.get("tipo").getAsString()) {
 			case "CREAR_PART":
@@ -97,6 +93,11 @@ public class Servidor {
 			case "FIN_PART":
 				break;
 			default:
+				for (Session s : sesiones) {
+					if (!sesion.equals(s)) {
+						s.getBasicRemote().sendText(mensaje);
+					}	// if
+				}	// for
 				System.err.println("Mensaje desconocido " + mensaje + ".\n");
 				break;
 		}	// switch
