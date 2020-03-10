@@ -16,6 +16,12 @@ public class Consultas {
 		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
 	}	// darUsuarioPorNombre
 	
+	public String listarPartidasElegibles() {
+		return "SELECT (CASE WHEN JugPat IS NULL THEN JugPes ELSE JugPat END), " +
+				"(CASE WHEN JugPat IS NULL THEN 'Pesquero' ELSE 'Patrullero' END), " +
+				"NomPart FROM Partidas";
+	}
+	
 	/*
 	 * Buscar un usuario por su nombre.
 	 */
