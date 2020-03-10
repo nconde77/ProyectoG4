@@ -75,7 +75,7 @@ public class Servidor {
 	 * @param mensaje Una cadena de texto que contiene el mensaje JSON del cliente con un tipo y los datos necesarios para procesarlo.
 	 */
 	@OnMessage
-	public void cuandoMensaje(Session sesion, String mensaje) {
+	public void cuandoMensaje(Session sesion, String mensaje) throws FileNotFoundException, SQLException, IOException {
 		JsonParser jParse = new JsonParser();
 		JsonObject jObj;;
 
@@ -117,19 +117,38 @@ public class Servidor {
 		ipool.liberarConexion(con, true);
 	}	// crear Partida
 	
-	public void guardarPartida(String nom1, String nom2,  String estado, int ptosJ1, int ptosJ2) {
-		ipool.obtenerConexion(true);
+	
+	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
+		IConexion con = ipool.obtenerConexion(true);
+		//Partida part;
+		//Jugador jPat, jPes;
+		//part = part.
+		
+		partPersistencia.guardarPartida(con, part);
+		ipool.liberarConexion(con, true);
+//		jPat = part.getJpat();
+//		jPes = part.getJpes();
+//		jPat.sumarPuntos(part.getPtosJPat()); 
+//		jPes.sumarPuntos(part.getPtosJPes());
+
+		//part.setEstadoPartida(EstadoPartida.TERMINADA);
 		
 	}	// guardarPartida
 	
-	public void iniciarPartida(String nom, String estado) {
-		ipool.obtenerConexion(true);
+	public void iniciarPartida(int id, String estado) throws SQLException {
+		IConexion con = ipool.obtenerConexion(true);
+		Partida part;
+		part = partPersistencia.encontrar(con, id);
+		part.setEstadoPartida(EstadoPartida.INICIADA);
+		ipool.liberarConexion(con, true);
 		
 	}	// iniciarPartida
 	
-	public void pausarPartida(String nom, String estado) {
-		ipool.obtenerConexion(true);
-		
+	public void pausarPartida(Partida part) throws FileNotFoundException, IOException { //String nom, String estado
+		IConexion con = ipool.obtenerConexion(true);
+		partPersistencia.guardarPartida(con, part);
+		//De alguna manera necesito acceder a la pantalla de inicio
+		ipool.liberarConexion(con, true);
 	}	// pausarPartida
 	
 	/*
@@ -150,6 +169,7 @@ public class Servidor {
 		jPat.sumarPuntos(part.getPtosJPat()); 
 		jPes.sumarPuntos(part.getPtosJPes());
 		part.setEstadoPartida(EstadoPartida.TERMINADA);
+		ipool.liberarConexion(con, true);
 	}	// terminarPartida
 		
 	@OnError
