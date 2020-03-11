@@ -16,6 +16,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import ude.proyecto3.Servidor.Logica.EstadoPartida;
@@ -30,6 +33,8 @@ import ude.proyecto3.Servidor.Persistencia.IPoolConexiones;
 @ServerEndpoint("/Servidor")
 public class Servidor {
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
+	// Para poder loguear.
+	Logger logger = Logger .getLogger(Servidor.class.getName());
 	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
 	private IPoolConexiones ipool;
 	private IDAOJugador jugPersistencia;
@@ -64,7 +69,9 @@ public class Servidor {
 	 */
 	@OnOpen
 	public void alAbrir(Session sesion) {
-		System.out.println("Cerrando sesión " + sesion.getId() + ".");
+		System.out.println("Abriendo sesión " + sesion.getId() + ".");
+		System.err.println("Abriendo sesión " + sesion.getId() + ".");
+		logger.log(Level.INFO, "Abriendo sesión " + sesion.getId() + ".");
 		sesiones.add(sesion);
 	}	// alAbrir
 	
@@ -77,9 +84,18 @@ public class Servidor {
 	@OnMessage
 	public void cuandoMensaje(Session sesion, String mensaje) throws FileNotFoundException, SQLException, IOException {
 		JsonParser jParse = new JsonParser();
-		JsonObject jObj;;
+		JsonObject jObj;
 		
+		System.out.println("Hay mensaje " + mensaje + ".\n");
+		System.err.println("Hay mensaje " + mensaje + ".\n");
 
+		for (Session s : sesiones) {
+			if (!s.equals(sesion)) {
+				logger.log(Level.INFO, "Sesión " + s.getId() + ".\n");
+				s.getBasicRemote().sendText(mensaje);
+			}	// if
+		}	// for
+		
 		jObj = jParse.parse(mensaje).getAsJsonObject();
 		switch (jObj.get("tipo").getAsString()) {
 			case "CREAR_PART":
@@ -93,11 +109,6 @@ public class Servidor {
 			case "FIN_PART":
 				break;
 			default:
-				for (Session s : sesiones) {
-					if (!sesion.equals(s)) {
-						s.getBasicRemote().sendText(mensaje);
-					}	// if
-				}	// for
 				System.err.println("Mensaje desconocido " + mensaje + ".\n");
 				break;
 		}	// switch
@@ -182,6 +193,7 @@ public class Servidor {
 	@OnClose
 	public void alCerrar(Session sesion) {
 		System.out.println("Cerrando sesión " + sesion.getId() + ".");
+		logger.log(Level.INFO, "Cerrando sesión " + sesion.getId() + ".");
 		sesiones.remove(sesion);
 	}	// alCerrar
 	

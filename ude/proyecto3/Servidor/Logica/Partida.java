@@ -31,12 +31,14 @@ public class Partida {
 		estado = EstadoPartida.CREADA;
 	}	// Partida
 	
+	
 	public Jugador setJugadorPatrullero(String j) throws SQLException {
 		if (j != null) {
 			return daoj.encontrar(null, j);
 		}	// if
 		else return null;
 	}	// setJugadorPatrullero
+	
 	
 	public Jugador setJugadorPesqueros(String j) throws SQLException {
 		if (j != null) {
@@ -89,7 +91,7 @@ public class Partida {
 	}	// setJugadorPatrullero
 	
 	public void iniciarPartida() {
-		Estado = EstadoPartida.EN_CURSO;
+		Estado = EstadoPartida.INICIADA;
 	}
 	
 	public Jugador getJpat() {
