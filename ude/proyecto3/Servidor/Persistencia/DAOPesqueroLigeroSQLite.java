@@ -23,6 +23,10 @@ import ude.proyecto3.Servidor.Logica.PesqueroLigero;
 public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
 	private Consultas consul;
 	
+	public DAOPesqueroLigeroSQLite() {
+		consul = new Consultas();
+	}	// DAOPesqueroLigeroSQLite
+	
 	@Override
 	public void guardar(IConexion icon, PesqueroLigero p) throws FileNotFoundException, IOException, SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;

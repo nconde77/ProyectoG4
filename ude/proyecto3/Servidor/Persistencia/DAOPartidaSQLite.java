@@ -23,6 +23,10 @@ import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 public class DAOPartidaSQLite implements IDAOPartida {
 	private Consultas consul;
 	
+	public DAOPartidaSQLite() {
+		consul = new Consultas(),
+	}	// DAOPartidaSQLite
+	
 	public void guardarPartida(IConexion icon, Partida p) throws FileNotFoundException, IOException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con;

@@ -20,6 +20,10 @@ import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 public class DAOJugadorSQLite implements IDAOJugador {
 	private Consultas consul;
 	
+	public DAOJugadorSQLite() {
+		consul = new Consultas();
+	}	// DAOJugadorSQLite
+	
 	@Override
 	public void insertar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
 		// Obtener una conexion concreta SQLite a la base.

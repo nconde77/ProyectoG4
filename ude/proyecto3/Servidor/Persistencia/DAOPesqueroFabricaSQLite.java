@@ -23,6 +23,9 @@ import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 	private Consultas consul;
 	
+	public DAOPesqueroFabricaSQLite() {
+		consul = new Consultas();
+	}	// DAOPesqueroFabricaSQLite
 	
 	@Override
 	public void guardar(IConexion icon, PesqueroFabrica p) throws FileNotFoundException, IOException {
