@@ -97,9 +97,14 @@ public class Servidor {
 		jObj = (JSONObject) jParser.parse(mensaje);
 		
 		switch ((String) jObj.get("tipo")) {
-			case "MOVIMIENTO":
-			case "DISPARO":
+			case "CAPTURAP1": case "CAPTURAP2": case "CAPTURAP3": case "CAPTURAP4":
 			case "COMBUSTIBLE":
+			case "DISPARO":
+			case "MOVIMIENTO":
+			case "PAUSA":
+			case "PECES":
+			case "REANUDAR":
+			case "TIEMPO":
 				for (Session s : sesiones) {
 					if (!s.equals(sesion)) {
 						// logger.log(Level.INFO, "Sesión " + s.getId() + ".\n");

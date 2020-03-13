@@ -41,7 +41,7 @@ public class PruebaPersistencia {
 		DAOOPVPesadoSQLite daoOP = new DAOOPVPesadoSQLite();
 		OPVPesado op1, op2;
 		DAOOPVLigeroSQLite  daoOL = new DAOOPVLigeroSQLite();
-		PesqueroLigero ol1, ol2;
+		OPVLigero ol1, ol2;
 		
 		String driver = "jdbc:sqlite";
 		String db_factory = "ude.proyecto3.Servidor.Persistencia.FabricaSQLite";
