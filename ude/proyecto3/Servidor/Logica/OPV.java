@@ -4,19 +4,20 @@ import ude.proyecto3.Servidor.Logica.Vehiculo;
 
 public abstract class OPV extends Vehiculo {
 	private int energia;
-	
 	public OPV(String id, float angulo, float rotacion, float posx, float posy, int ene)
 	{
-		super (id, angulo, rotacion, posx, posy);
-		energia = ene;
+		super (id, angulo, rotacion, posx, posy);	
+		energia = 0;
 	}	// OPV
-	
-	public int getEnergia() {
-		return energia;
-	}	// getEnergia
-	
-	public void setEnergia(int ene) {
-		energia = ene;
-	}	// setEnergia
 
+
+public void setEnergia(int ener) {
+	if (ener != 0) {
+		energia=ener;
+	}	// if
+}	// setJugadorOPV
+	
+public int getEnergia() {
+	return energia;
+}	// getEnergia
 }	/* OPV */
