@@ -48,11 +48,8 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         }
         catch (SQLException e) {
             System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
-        }
-        finally {
-        	con.close();
-        }
-	}
+        }	// try-catch
+	}	// guardar
 	
 	//Agregado
 	public boolean miembro(IConexion icon, int i) throws SQLException {
@@ -77,7 +74,6 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
     	esMiembro = rs.isBeforeFirst();
     	rs.close();
     	pstmt.close();
-    	con.close();
         
         return esMiembro;
 	}	// miembro
@@ -144,10 +140,7 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         }
         catch (SQLException e) {
             System.out.println("Error al insertar un pesquero ligero .\n" + e.getMessage());
-        }
-        finally {
-            con.close();
-        }
+        }	// try-catch
 	}	// borrar
 	
 	/*

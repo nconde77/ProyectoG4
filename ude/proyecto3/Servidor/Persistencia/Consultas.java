@@ -55,15 +55,15 @@ public class Consultas {
 	 * Devuelve la consulta SQLite para guardar un pesquero de clase "fábrica".
 	 */
 	public String guardarPesqueroFabrica() {
-		return "INSERT INTO Pesqueros VALUES (\"Fabrica\", ?, ?, ?, ?, ?)"; 
+		return "INSERT INTO Pesqueros VALUES (?, \"Fabrica\", ?, ?, ?, ?, ?)"; 
 	}
 	
 	/**
 	 * Devuelve la consulta SQLite para guardar un pesquero de clase "ligero".
 	 */
 	public String guardarPesqueroLigero() {
-		return "INSERT INTO Pesqueros VALUES (\"Ligero\", ?, ?, ?, ?, ?)"; 
-	}
+		return "INSERT INTO Pesqueros VALUES (?, \"Ligero\", ?, ?, ?, ?, ?)"; 
+	}	// guardarPesqueroLigero
 	
 	/**
 	 * Insertar 

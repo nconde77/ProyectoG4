@@ -49,10 +49,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
         catch (SQLException e) {
             System.out.println("Error al insertar un jugador.\n" + e.getMessage());
         }
-        finally {
-            con.close();
-            return id;
-        }
 	}	// insertar
 	
 	@Override
@@ -77,7 +73,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
     	esMiembro = rs.isBeforeFirst();
     	rs.close();
     	pstmt.close();
-    	con.close();
         
         return esMiembro;
 	}	// miembro
@@ -137,9 +132,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
         }
         catch (SQLException e) {
             System.out.println("Error al insertar un jugador.\n" + e.getMessage());
-        }
-        finally {
-            con.close();
         }
 	}	// borrar
 	

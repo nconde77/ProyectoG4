@@ -45,7 +45,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
             pstmt.setInt(7, p.getCombusJPes());
             pstmt.executeUpdate();
             pstmt.close();
-        	con.close();
         }
         catch (SQLException e) {
             System.out.println("Error al guardar una partida.\n" + e.getMessage());
@@ -74,7 +73,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
     	esMiembro = rs.isBeforeFirst();
     	rs.close();
     	pstmt.close();
-    	con.close();
         
         return esMiembro;
 	}	// miembro
@@ -113,8 +111,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
   	}
   	rs.close();
   	pstmt.close();
-  	con.close();
-      
+  	
     return p;
 }	// encontrar
 	
@@ -140,10 +137,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
       }
       catch (SQLException e) {
           System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
-      }
-      finally {
-          con.close();
-      }
+      }	// try-catch
 	}	// borrar
 	
 	/*

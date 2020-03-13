@@ -40,6 +40,18 @@ public class CrearBDSQLite {
 					" Energia  REAL NOT NULL);";
 			System.out.println("Update 2: " + sql);
 			stmt.executeUpdate(sql);
+			
+			/* Tabla de OPV. */
+			sql = "CREATE TABLE Patrulleros " +
+					"(Id   VARCHAR PRIMARY KEY NOT NULL," +
+					" Tipo VARCHAR NOT NULL,"  +
+					" Angulo   REAL NOT NULL," +
+					" Rotacion REAL NOT NULL," +
+					" PosX     REAL NOT NULL," +
+					" PosY     REAL NOT NULL," +
+					" Energia  REAL NOT NULL);";
+			System.out.println("Update 3: " + sql);
+			stmt.executeUpdate(sql);
 		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();

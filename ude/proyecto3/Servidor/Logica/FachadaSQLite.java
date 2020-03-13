@@ -61,7 +61,7 @@ public class FachadaSQLite implements IFachada {
 		String id = UUID.randomUUID().toString();
 		Partida part = new Partida(id, nom, bando, ptosJPat, ptosJPes, estado, combusJPes, combusJPat, tiempo);
 		
-		daoPartida.guardarPartida(con, part);
+		daoPartida.guardar(con, part);
 		ipool.liberarConexion(con, true);
 		
 		return id;
@@ -77,7 +77,7 @@ public class FachadaSQLite implements IFachada {
 		//Jugador jPat, jPes;
 		//part = part.
 		
-		daoPartida.guardarPartida(con, part);
+		daoPartida.guardar(con, part);
 		ipool.liberarConexion(con, true);
 	}	// guardarPartida
 	
@@ -97,7 +97,7 @@ public class FachadaSQLite implements IFachada {
 	
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException { //String nom, String estado
 		IConexion con = ipool.obtenerConexion(true);
-		daoPartida.guardarPartida(con, part);
+		daoPartida.guardar(con, part);
 		//De alguna manera necesito acceder a la pantalla de inicio
 		ipool.liberarConexion(con, true);
 	}	// pausarPartida
@@ -135,7 +135,7 @@ public class FachadaSQLite implements IFachada {
 		String id = UUID.fromString(nom).toString();
 		
 		j = new Jugador(id, nom, correo);
-		daoJugador.insertar(icon, j);
+		daoJugador.guardar(icon, j);
 		ipool.liberarConexion(icon, true);
 		
 		return id;

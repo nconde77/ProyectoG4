@@ -2,9 +2,9 @@ package ude.proyecto3.Servidor.Logica;
 
 public class OPVLigero extends OPV {
 	
-	public OPVLigero(String id, long angulo, long rotacion, long posx, long posy)
+	public OPVLigero(String id, long angulo, long rotacion, long posx, long posy, int ene)
 	{
-		super (id, angulo, rotacion, posx, posy);		
+		super (id, angulo, rotacion, posx, posy, ene);
 	}	// OPVligero
 
 }	/* OPVligero */
