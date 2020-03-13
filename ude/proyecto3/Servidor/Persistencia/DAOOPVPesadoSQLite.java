@@ -4,7 +4,7 @@ public class DAOOPVPesadoSQLite implements IDAOOPVPesado {
 	private Consultas consul;
 	
 	public DAOOPVPesadoSQLite() {
-		consul = new Consultas(),
+		consul = new Consultas();
 	}	// DAOOPVPesadoSQLite
 
 }

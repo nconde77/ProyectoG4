@@ -1,5 +1,19 @@
 package ude.proyecto3.Servidor.Logica;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.websocket.Session;
+
 import ude.proyecto3.Servidor.Logica.Partida;
 import ude.proyecto3.Servidor.Persistencia.IConexion;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
@@ -11,12 +25,13 @@ import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
+	
 	private IDAOJugador daoJugador;
 	private IDAOPartida daoPartida;
 	private IPoolConexiones ipool;
 	
 	
-	public FachadaSQLite () {
+	public FachadaSQLite () throws FileNotFoundException, IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		// Parametros del sistema.
 		cataHome = System.getProperty("catalina.home");
 		InetAddress addr = InetAddress.getLocalHost();
@@ -29,25 +44,34 @@ public class FachadaSQLite implements IFachada {
 		db_url = configuracion.getProperty("db_url");
 		db_factory = configuracion.getProperty("db_factory");
 		
-		IFabrica fabPartida = (IFabrica) Class.forName(db_factory).newInstance();
+		IFabrica fabJuego = (IFabrica) Class.forName(db_factory).newInstance();
+		daoJugador = fabJuego.crearDAOJugador();
+		daoPartida = fabJuego.crearDAOPartida();
 	}	// FachadaSQLite
 	
-	/*
-	 * crearPartida.
+	/* De Partida. */
+	
+	/**
 	 * Crear una partida nueva a partir de datos en mensaje JSON.
 	 * @param nom Nombre de la partida.
 	 * @param bando Bando que toma el jugador que crea la partida.
 	 */
-	public void crearPartida(String nom, String bando, long id, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException, FileNotFoundException, IOException {
+	public String crearPartida(String nom, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException, FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
-		Partida part;
-		part = new Partida(nom, bando, id, ptosJPat, ptosJPes, estado, combusJPes, combusJPat, tiempo);
+		String id = UUID.randomUUID().toString();
+		Partida part = new Partida(id, nom, bando, ptosJPat, ptosJPes, estado, combusJPes, combusJPat, tiempo);
+		
 		daoPartida.guardarPartida(con, part);
-		partidas.put(part.getId(), part);
 		ipool.liberarConexion(con, true);
+		
+		return id;
 	}	// crear Partida
 	
-	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
+	/**
+	 * Guarda una partida cuando se pausa o termina.
+	 * @param part El objeto &quot;Partida&quot; a guardar.
+	 */
+	 public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
 		//Partida part;
 		//Jugador jPat, jPes;
@@ -56,6 +80,12 @@ public class FachadaSQLite implements IFachada {
 		daoPartida.guardarPartida(con, part);
 		ipool.liberarConexion(con, true);
 	}	// guardarPartida
+	
+	/**
+	 * Iniciar una partida creada cuando se une el segundo jugador o cuando se saca de pausa.
+	 * @param id El id de la partida.
+	 * @param estado El estado previo de la partida, antes de (re)iniciarla.
+	 */
 	
 	public void iniciarPartida(int id, String estado) throws SQLException {
 		IConexion con = ipool.obtenerConexion(true);
@@ -90,8 +120,41 @@ public class FachadaSQLite implements IFachada {
 		jPat.sumarPuntos(part.getPtosJPat()); 
 		jPes.sumarPuntos(part.getPtosJPes());
 		part.setEstadoPartida(EstadoPartida.TERMINADA);
-		partidas.remove(part.getId());
 		ipool.liberarConexion(con, true);
 	}	// terminarPartida
+	
+	/* De jugador. */
+	
+	/**
+	 * @param nom Nombre del jugador.
+	 * @param bando Bando que eligió: patrullero o pesquero.
+	 */
+	public String crearJugador(String nom, String correo) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		Jugador j;
+		String id = UUID.fromString(nom).toString();
+		
+		j = new Jugador(id, nom, correo);
+		daoJugador.insertar(icon, j);
+		ipool.liberarConexion(icon, true);
+		
+		return id;
+	}	// crearJugador
+	
+	/*
+	 * actPuntajeJugador
+	 * Implementa la actualización del puntaje de un jugador al terminar una partida.
+	 * @param id El identificador del jugador.
+	 * @param ptosJugador El puntaje del jugador (entero).
+	 */
+	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
+		
+	}	// actPuntajeJugador
+
+	@Override
+	public void actPuntajeJugador(long id, int ptosJPat) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}	// actPuntajeJugador
 
 }	/* FachadaSQLite */

@@ -8,7 +8,7 @@ import ude.proyecto3.Servidor.Logica.Partida;
 import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 
 public interface IDAOPartida {
-	public void guardarPartida(IConexion icon, Partida p) throws FileNotFoundException, IOException;
+	public void guardar(IConexion icon, Partida p) throws FileNotFoundException, IOException;
 	//Pausar Partida esto va en Fachada
 	public Partida encontrar(IConexion icon, int n) throws SQLException;
 	public void borrar(IConexion icon, int i) throws SQLException;

@@ -8,7 +8,7 @@ import ude.proyecto3.Servidor.Logica.Jugador;
 
 
 public interface IDAOJugador {
-	public void insertar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException;
+	public void guardar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException;
 	public boolean miembro(IConexion icon, String s) throws SQLException;
 	// encontrar por nombre o correo-e.
 	public Jugador encontrar(IConexion icon, String s) throws SQLException;

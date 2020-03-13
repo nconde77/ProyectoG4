@@ -11,12 +11,12 @@ public class Partida {
 	//, jPes;
 	private Jugador jPat, jPes;
 	private DAOJugadorSQLite daoj;
-	private long Id;
+	private String id;
 	private int ptosJPat, ptosJPes, combusJPes, combusJPat, cantPeces, Tiempo;
 	private EstadoPartida Estado;
 	//private OPV;
 	
-	public Partida(String nomUsu, String bando, long id, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException {
+	public Partida(String i, String nomUsu, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException {
 		if (bando == "Pesquero" ) {
 			jPes = setJugadorPatrullero(nomUsu);
 		} 
@@ -26,7 +26,7 @@ public class Partida {
 		//jPes = setJugadorPatrullero(nomPes);
 		ptosJPat = ptosJPes = 0;
 		
-		id = -1;
+		id = i;
 		
 		estado = EstadoPartida.CREADA;
 	}	// Partida
@@ -102,8 +102,8 @@ public class Partida {
 		return jPes;
 	}
 	
-	public long getId() {
-		return Id;
+	public String getId() {
+		return id;
 	}
 	
 	public int getPtosJPat() {

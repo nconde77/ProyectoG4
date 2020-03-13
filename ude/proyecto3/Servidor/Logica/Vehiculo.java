@@ -1,78 +1,52 @@
 package ude.proyecto3.Servidor.Logica;
 
 public abstract class Vehiculo {
-
 	private float angulo, rotacion, posX, posY;
-	private int id;//,energia;
+	private String id;
 	
-	public Vehiculo(int i,float ang, float rot, float posx, float posy) {
-		
-		id=i;
+	public Vehiculo(String i, float ang, float rot, float posx, float posy) {
+		id = i;
 		angulo = ang;
-		rotacion=rot;
-		posX=posx;
-		posY=posy;
-		//energia=ener;
-	}
+		rotacion = rot;
+		posX = posx;
+		posY = posy;
+	}	// Vehiculo
 	
-	public void setId(int i) {
-		if (i != 0) {
-			id = i;
-		}	// if
-	}	// set
 	
 	public void setAngulo(float ang) {
-		if (ang != 0) {
 			angulo = ang;
-		}	// if
-	}	// set
+	}	// setAngulo
 	
 	public void setRotacion(float rot) {
-		if (rot != 0) {
 			rotacion = rot;
-		}	// if
-	}	// set
+	}	// setRotacion
 	
 	public void setPosX(float posx) {
-		if (posx != 0) {
 			posX = posx;
-		}	// if
-	}	// set
+	}	// setPosX
 	
 	public void setPosY(float posy) {
-		if (posy != 0) {
 			posY = posy;
-		}	// if
-	}	// set
+	}	// setPosY
 	
-	/*public void setEnergia(int ener) {
-		if (ener != 0) {
-			energia = ener;
-		}	// if
-	}*/// set
-	
-	public int getId() {
+	public String getId() {
 		return id;
-	}	
+	}	// getId	
 	
 	public float getAngulo() {
 		return angulo;
-	}	
+	}	// getAngulo
 	
 	public float getRotacion() {
-		return rotacion ;
-	}
+		return rotacion;
+	}	// getRotacion
 	
 	public float getPosY() {
 		return posY;
-	}
+	}	// getPosY
 	
 	public float getPosX() {
-		return posX ;
-	}
-	
-	/*public int getEnergia() {
-		return energia;
-	}*/	
-	
-}
+		return posX;
+	}	// getPosX
+
+}	/* Vehiculo */

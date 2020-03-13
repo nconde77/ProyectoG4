@@ -9,7 +9,9 @@ import ude.proyecto3.Servidor.Logica.OPV;
  * 
  */
 public class OPVLiviano extends OPV {
-	public OPVLiviano(int id,long angulo, long rotacion, long posx, long posy) {
+	
+	public OPVLiviano(String id, long angulo, long rotacion, long posx, long posy) {
 		super(id, angulo, rotacion, posx, posy);
-	}
+	}	// OPVLiviano
+
 }	/* OPVLiviano */

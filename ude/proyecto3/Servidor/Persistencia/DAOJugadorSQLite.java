@@ -25,29 +25,33 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	}	// DAOJugadorSQLite
 	
 	@Override
-	public void insertar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
+	public void guardar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
-		
+		long id = -1;
 		String query;
 		PreparedStatement pstmt;
 		
         try {
-            query = consul.insertarJugador();
+            // Insertar el jugador en la base.
+        	query = consul.guardarJugador();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, j.getNombre());
-            pstmt.setString(2, j.getCorreo());
-            pstmt.setInt(3, j.getId());
+            pstmt.setString(1, j.getId());
+            pstmt.setString(2, j.getNombre());
+            pstmt.setString(3, j.getCorreo());
             pstmt.setLong(4, j.getPuntaje());
+            System.out.println(j.getId() + "/" + j.getNombre() + "/" + j.getCorreo() + "/" + j.getPuntaje());
             pstmt.executeUpdate();
             pstmt.close();
+            // Obtener el id.
         }
         catch (SQLException e) {
             System.out.println("Error al insertar un jugador.\n" + e.getMessage());
         }
         finally {
             con.close();
+            return id;
         }
 	}	// insertar
 	
@@ -101,9 +105,9 @@ public class DAOJugadorSQLite implements IDAOJugador {
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
     	if (rs.next()) {
-    		j = new Jugador(rs.getString("Nombre"), 
-    				rs.getString("Correo"),
-    				rs.getInt("Id"));
+    		j = new Jugador(rs.getString("Id"),
+    				rs.getString("Nombre"), 
+    				rs.getString("Correo"));
     		j.sumarPuntos(rs.getLong("Puntaje"));
     	}
     	rs.close();

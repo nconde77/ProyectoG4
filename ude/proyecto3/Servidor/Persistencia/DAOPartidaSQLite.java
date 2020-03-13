@@ -24,10 +24,10 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	private Consultas consul;
 	
 	public DAOPartidaSQLite() {
-		consul = new Consultas(),
+		consul = new Consultas();
 	}	// DAOPartidaSQLite
 	
-	public void guardarPartida(IConexion icon, Partida p) throws FileNotFoundException, IOException {
+	public void guardar(IConexion icon, Partida p) throws FileNotFoundException, IOException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con;
 		String query;
@@ -38,19 +38,18 @@ public class DAOPartidaSQLite implements IDAOPartida {
         	con = conSQLite.getConexion(); 
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
- //           pstmt.setInt(1, p.getJPatId()); //guardo Id patrulla
- //           pstmt.setInt(2, p.getJPesId()); //guardo Id pesquero
-            pstmt.setLong(3, p.getId());
+            pstmt.setString(1, p.getId());
             pstmt.setLong(4, p.getPtosJPat());
             pstmt.setLong(5, p.getPtosJPes());
             pstmt.setInt(6, p.getCombusJPat());
             pstmt.setInt(7, p.getCombusJPes());
             pstmt.executeUpdate();
             pstmt.close();
+        	con.close();
         }
         catch (SQLException e) {
-            System.out.println("Error al insertar un jugador.\n" + e.getMessage());
-        }
+            System.out.println("Error al guardar una partida.\n" + e.getMessage());
+        }	// try-catch
 	}	// guardarPartida
 
 	public boolean miembro(IConexion icon, int j1, int j2) throws SQLException {

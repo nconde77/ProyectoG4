@@ -35,21 +35,22 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 		
 		try {
 			Connection con = conSQLite.getConexion();
-          query = consul.guardarPesqueroFabrica();
-          pstmt = con.prepareStatement(query);
-          pstmt.setInt(1, p.getId()); 
-          pstmt.setFloat(2, p.getAngulo()); 
-          pstmt.setFloat(3, p.getRotacion());
-          pstmt.setFloat(4, p.getPosY());
-          pstmt.setFloat(5, p.getPosX());
-          pstmt.setInt(6, p.getEnergia());
-          pstmt.executeUpdate();
-          pstmt.close();
-      }
-      catch (SQLException e) {
-          System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
-      }
-	}
+			query = consul.guardarPesqueroFabrica();
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, p.getId()); 
+			pstmt.setFloat(2, p.getAngulo()); 
+			pstmt.setFloat(3, p.getRotacion());
+			pstmt.setFloat(4, p.getPosX());
+			pstmt.setFloat(5, p.getPosY());
+			pstmt.setInt(6, p.getEnergia());
+			pstmt.executeUpdate();
+			pstmt.close();
+		}
+		catch (SQLException e) {
+			System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
+		}	// try-catch
+	}	// guardar
+	
 	//Agregado
 	public boolean miembro(IConexion icon, int i) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
@@ -104,7 +105,7 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
   	// Si el jugador existe se crea el objeto y se lo devuelve.
   	//super (id,angulo,rotacion,posx,posy,energia);	
   	if (rs.next()) {
-  		p = new PesqueroFabrica(rs.getInt("id"), 
+  		p = new PesqueroFabrica(rs.getString("id"), 
   				rs.getFloat("angulo"),
   				rs.getFloat("rotacion"),
   				rs.getFloat("posx"),

@@ -37,7 +37,7 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         try {
             query = consul.guardarPesqueroLigero();
             pstmt = con.prepareStatement(query);
-            pstmt.setInt(1, p.getId()); 
+            pstmt.setString(1, p.getId()); 
             pstmt.setFloat(2, p.getAngulo()); 
             pstmt.setFloat(3, p.getRotacion());
             pstmt.setFloat(4, p.getPosY());
@@ -108,7 +108,7 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
     	// Si el jugador existe se crea el objeto y se lo devuelve.
     	//super (id,angulo,rotacion,posx,posy,energia);	
     	if (rs.next()) {
-    		p = new PesqueroLigero(rs.getInt("id"), 
+    		p = new PesqueroLigero(rs.getString("id"), 
     				rs.getFloat("angulo"),
     				rs.getFloat("rotacion"),
     				rs.getFloat("posx"),
@@ -180,5 +180,4 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         return aux;
 	}	// esVacio
 
-
-}
+}	/* DAOPesqueroLigeroSQLite */
