@@ -65,12 +65,19 @@ public class Consultas {
 		return "INSERT INTO Pesqueros VALUES (?, \"Ligero\", ?, ?, ?, ?, ?)"; 
 	}	// guardarPesqueroLigero
 	
+	public String guardarHelicoptero() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Helicoptero\", ?, ?, ?, ?, ?)"; 
+	}	// guardarHelicoptero
+	
+	public String guardarLancha() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Lancha\", ?, ?, ?, ?, ?)"; 
+	}	// guardarLancha
 	/**
 	 * Insertar 
 	 * @return Devuelve el identificador de la partida guardada.
 	 */
 	public String guardarOPVPesado() {
-		return "INSERT INTO Partidas VALUES (?, \"Ligero\", ?, ?, ?, ?, ?)";
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)";
 	}
 	
 	/**
@@ -81,31 +88,27 @@ public class Consultas {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
 	}
 	
-	public String encontrarPesquero() {
-		return "SELECT * FROM ? WHERE Id = ?"; 
-	}
+//	public String encontrarPesquero() {
+//		return "SELECT * FROM ? WHERE id = ?"; 
+//	}
 //	public String eliminarPesqueroLigero() {
 //		return "DELETE FROM PesqueroLigero WHERE id = TRIM(?)";
 //	}
-	public String listarPesquero() {
-		return "SELECT Id FROM ? ORDER BY Id";
+	public String listarPorId() {
+		return "SELECT Id, Tipo FROM ? ORDER BY Id";
 	}
 //	public String encontrarPesqueroFabrica() {
 //		return "SELECT * FROM PesqueroFabrica WHERE id = ?"; 
 //	}
-	public String eliminarPesquero() {
-		return "DELETE FROM ? WHERE Id = TRIM(?)";
+	public String eliminarPorId() {
+		return "DELETE FROM ? WHERE id = TRIM(?)";
 	}
 //	public String listarPesqueroFabrica() {
 //		return "SELECT Id FROM PesqueroFabrica ORDER BY Id";
 //	}
 
 	public String encontrarPorId() {
-		return "SELECT * FROM ? WHERE Id = ?";
+		return "SELECT * FROM ? WHERE id = ?";
 	}
 	
-	public String eliminarPorId() {
-		return "DELETE FROM ? WHERE Id = ?";
-	}
-
 }	/* Consultas */

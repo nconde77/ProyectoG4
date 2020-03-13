@@ -4,13 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import ude.proyecto3.Servidor.Logica.OPVLigero;
+import ude.proyecto3.Servidor.Logica.Lancha;
 
-public interface IDAOOPVLigero {
+public interface IDAOLancha {
 
-	void guardar(IConexion icon, OPVLigero p) throws FileNotFoundException, IOException, SQLException;
+	void guardar(IConexion icon, Lancha p) throws FileNotFoundException, IOException, SQLException;
 
-	OPVLigero encontrar(IConexion icon, int n) throws SQLException;
+	Lancha encontrar(IConexion icon, int n) throws SQLException;
 
 	void borrar(IConexion icon, int i) throws SQLException;
 

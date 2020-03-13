@@ -128,7 +128,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		PreparedStatement pstmt;
 		
       try {
-          query = consul.eliminarPesquero();
+          query = consul.eliminarPorId();
           pstmt = con.prepareStatement(query);
           pstmt.setString(1, "PesqueroFabrica");
           pstmt.setInt(2, i);
@@ -159,7 +159,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
       	throw new SQLException("No hay conexiones disponibles.");
       }	// if
       
-    query = consul.listarPesquero();
+    query = consul.listarPorId();
   	pstmt = con.prepareStatement(query);
   	pstmt.setString(1, "PesqueroFabrica");
   	rs = pstmt.executeQuery();

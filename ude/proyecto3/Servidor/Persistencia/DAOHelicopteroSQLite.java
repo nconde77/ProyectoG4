@@ -1,3 +1,9 @@
+//package ude.proyecto3.Servidor.Persistencia;
+//
+//public class DAOHelicopteroSQLite {
+//
+//}
+
 package ude.proyecto3.Servidor.Persistencia;
 
 import java.io.FileNotFoundException;
@@ -7,33 +13,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ude.proyecto3.Servidor.Logica.OPVLigero;
+import ude.proyecto3.Servidor.Logica.Helicoptero;
+//import ude.proyecto3.Servidor.Logica.OPVLigero;
 //import ude.proyecto3.Servidor.Logica.PesqueroLigero;
 
-public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
+public class DAOHelicopteroSQLite implements IDAOHelicoptero {
 	private Consultas consul;
 	
-	public DAOOPVLigeroSQLite() {
+	public DAOHelicopteroSQLite() {
 		consul = new Consultas();
 		
 	}	// DAOOPVLigeroSQLite
 	
 	@Override
-	public void guardar(IConexion icon, OPVLigero p) throws FileNotFoundException, IOException, SQLException {
+	public void guardar(IConexion icon, Helicoptero p) throws FileNotFoundException, IOException, SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 		String query;
 		PreparedStatement pstmt;
 		
         try {
-            query = consul.guardarOPVLigero();
+            query = consul.guardarHelicoptero();
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, p.getId()); 
             pstmt.setFloat(2, p.getAngulo()); 
             pstmt.setFloat(3, p.getRotacion());
             pstmt.setFloat(4, p.getPosY());
             pstmt.setFloat(5, p.getPosX());
-            pstmt.setInt(6, p.getEnergia());
+            //pstmt.setInt(6, p.getEnergia());
             pstmt.executeUpdate();
             pstmt.close();
         }
@@ -59,7 +66,7 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         
     	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, "OPVLigero");
+    	pstmt.setString(1, "Helicoptero");
     	pstmt.setInt(2, i);
     	rs = pstmt.executeQuery();
     	esMiembro = rs.isBeforeFirst();
@@ -71,7 +78,7 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public OPVLigero encontrar(IConexion icon, int n) throws SQLException {
+	public Helicoptero encontrar(IConexion icon, int n) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -80,7 +87,7 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
 		ResultSet rs;
 		String query;
         //Jugador j = null;
-		OPVLigero p = null;
+		Helicoptero p = null;
         
         if (con == null) {
         	throw new SQLException("No hay conexiones disponibles.");
@@ -88,19 +95,19 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         
     	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
-        pstmt.setString(1, "OPVLigero");
+        pstmt.setString(1, "Helicoptero");
         pstmt.setInt(2, n);
     	rs = pstmt.executeQuery();
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
     	//super (id,angulo,rotacion,posx,posy,energia);	
     	if (rs.next()) {
-    		p = new OPVLigero(rs.getString("id"), 
+    		p = new Helicoptero(rs.getString("id"), 
     				rs.getFloat("angulo"),
     				rs.getFloat("rotacion"),
     				rs.getFloat("posx"),
-    				rs.getFloat("posy"),
-    				rs.getInt("energia"));
+    				rs.getFloat("posy"));
+    				// rs.getInt("energia"));
     		//j.sumarPuntos(rs.getLong("Puntaje"));
     	}
     	rs.close();
@@ -124,13 +131,13 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         try {
             query = consul.eliminarPorId();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, "OPVLigero");
+            pstmt.setString(1, "Helicoptero");
             pstmt.setInt(2, i);
             pstmt.executeUpdate();
             pstmt.close();
         }
         catch (SQLException e) {
-            System.out.println("Error al insertar un opv ligero .\n" + e.getMessage());
+            System.out.println("Error al insertar un helicoptero .\n" + e.getMessage());
         }	// try-catch
 	}	// borrar
 	
@@ -155,7 +162,7 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         
         query = consul.listarPorId();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, "OPVLigero");
+    	pstmt.setString(1, "Helicoptero");
     	rs = pstmt.executeQuery();
     	aux = !(rs.isBeforeFirst());
     	rs.close();
@@ -164,4 +171,4 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         return aux;
 	}	// esVacio
 	
-}	/* DAOOPVLigeroSQLite */
+}	/* DAOHelicopteroSQLite */
