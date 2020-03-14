@@ -27,9 +27,8 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	@Override
 	public void guardar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
 		// Obtener una conexion concreta SQLite a la base.
-		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		ConexionSQLite conSQLite = (ConexionSQLite) icon;
 		Connection con = conSQLite.getConexion();
-		long id = -1;
 		String query;
 		PreparedStatement pstmt;
 		
@@ -40,8 +39,9 @@ public class DAOJugadorSQLite implements IDAOJugador {
             pstmt.setString(1, j.getId());
             pstmt.setString(2, j.getNombre());
             pstmt.setString(3, j.getCorreo());
-            pstmt.setLong(4, j.getPuntaje());
-            System.out.println(j.getId() + "/" + j.getNombre() + "/" + j.getCorreo() + "/" + j.getPuntaje());
+            pstmt.setString(4, j.getContrasenia());
+            pstmt.setString(5, j.getSal());
+            pstmt.setLong(6, j.getPuntaje());
             pstmt.executeUpdate();
             pstmt.close();
             // Obtener el id.

@@ -3,7 +3,7 @@ package ude.proyecto3.Servidor.Logica;
 
 public class Jugador {
 	private String id, nombre, correo, contrasenia, sal;
-	long puntaje;
+	int puntaje;
 	
 	public Jugador(String i, String n, String c, String p, String s) {
 		id = i;

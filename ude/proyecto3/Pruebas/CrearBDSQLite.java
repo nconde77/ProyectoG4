@@ -26,7 +26,8 @@ public class CrearBDSQLite {
 					" Nombre  CHARACTER(64)  NOT NULL," +
 					" Correo  CHARACTER(128) NOT NULL," +
 					" Contrasenia VARCHAR NOT NULL," +
-					" Puntaje INT       NOT NULL);";
+					" Sal     CHAR(32) NOT NULL," +
+					" Puntaje INT      NOT NULL);";
 			System.out.println("Update 1: " + sql);
 			stmt.executeUpdate(sql);
 			
@@ -44,7 +45,9 @@ public class CrearBDSQLite {
 			
 			/* Tabla de OPV. */
 			sql = "CREATE TABLE Patrulleros " +
-					"(Id   VARCHAR PRIMARY KEY NOT NULL," +
+					"(Id    VARCHAR PRIMARY KEY NOT NULL," +
+					" IdLan VARCHAR,"  +
+					" IdHel VARCHAR,"  +
 					" Tipo VARCHAR NOT NULL,"  +
 					" Angulo   REAL NOT NULL," +
 					" Rotacion REAL NOT NULL," +

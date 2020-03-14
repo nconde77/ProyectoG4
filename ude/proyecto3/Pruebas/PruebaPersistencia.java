@@ -5,27 +5,12 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.UUID;
 
-import ude.proyecto3.Servidor.Logica.FachadaSQLite;
-import ude.proyecto3.Servidor.Logica.Jugador;
-import ude.proyecto3.Servidor.Logica.OPVLigero;
-import ude.proyecto3.Servidor.Logica.OPVPesado;
-import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
-import ude.proyecto3.Servidor.Logica.PesqueroLigero;
-import ude.proyecto3.Servidor.Persistencia.IConexion;
-import ude.proyecto3.Servidor.Persistencia.ConexionSQLite;
-import ude.proyecto3.Servidor.Persistencia.DAOJugadorSQLite;
-import ude.proyecto3.Servidor.Persistencia.DAOPesqueroFabricaSQLite;
-import ude.proyecto3.Servidor.Persistencia.DAOPesqueroLigeroSQLite;
-import ude.proyecto3.Servidor.Persistencia.DAOOPVLigeroSQLite;
-import ude.proyecto3.Servidor.Persistencia.DAOOPVPesadoSQLite;
-import ude.proyecto3.Servidor.Persistencia.IFabrica;
-import ude.proyecto3.Servidor.Persistencia.FabricaSQLite;
-import ude.proyecto3.Servidor.Persistencia.IConexion;
-import ude.proyecto3.Servidor.Persistencia.ConexionSQLite;
+import ude.proyecto3.Servidor.Logica.*;
+import ude.proyecto3.Servidor.Persistencia.*;
 
 
 public class PruebaPersistencia {
-	public static void main(String args[]) throws SQLException, FileNotFoundException, IOException, ClassNotFoundException {
+	public static void main(String args[]) throws SQLException, FileNotFoundException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		IConexion icon;
 		FachadaSQLite facade = new FachadaSQLite();
 		DAOJugadorSQLite daoJugador = new DAOJugadorSQLite();
@@ -46,34 +31,24 @@ public class PruebaPersistencia {
 		String j3 = facade.crearJugador("diego_rulo", "drulo@gmail.com", "passwddg");
 		String j4 = facade.crearJugador("bgnini", "bgnini@gmail.com", "passwdbg");
 		
-		System.out.println("Insertando jugadores...");
-		daoJugador.guardar(icon, j1);
-		daoJugador.guardar(icon, j4);
-		daoJugador.guardar(icon, j2);
-		daoJugador.guardar(icon, j3);
-		System.out.println("Fin.\nInsertando pesqueros...");
+		/* Pesqueros */
 		
-//		/* Pesqueros */
-//		pf1 = new PesqueroFabrica(UUID.randomUUID().toString(), 0, 0,  50,  50, 100);
-//		pf2 = new PesqueroFabrica(UUID.randomUUID().toString(), 0, 0, 150, 150, 100);
-//		daoPF.guardar(icon, pf1);
-//		daoPF.guardar(icon, pf2);
-//		pl1 = new PesqueroLigero(UUID.randomUUID().toString(), 0, 0,  50,  50, 100);
-//		pl2 = new PesqueroLigero(UUID.randomUUID().toString(), 0, 0, 150, 150, 100);
-//		daoPL.guardar(icon, pl1);
-//		daoPL.guardar(icon, pl2);
-//		System.out.println("Fin.\nInsertando OPVs...");
-//		
-//		/* OPV */
-//		op1 = new OPVPesado(UUID.randomUUID().toString(), 0, 590,  50,  50, 100);
-//		op2 = new OPVPesado(UUID.randomUUID().toString(), 0, 590, 150, 150, 100);
-//		daoOP.guardar(icon, op1);
-//		daoOP.guardar(icon, op2);
-//		ol1 = new OPVLigero(UUID.randomUUID().toString(), 0, 0,  50,  50, 100);
-//		ol2 = new OPVLigero(UUID.randomUUID().toString(), 0, 0, 150, 150, 100);
-//		daoOL.guardar(icon, ol1);
-//		daoOL.guardar(icon, ol2);
-//		System.out.println("Fin.");
+		String pf1 = facade.crearPesqueroFabrica(0, 0,  50,  50, 100);
+		String pf2 = facade.crearPesqueroFabrica(0, 0, 150, 150, 100);
+		
+		String pl1 = facade.crearPesqueroLigero(0, 0,  50,  50, 100);
+		String pl2 = facade.crearPesqueroLigero(0, 0, 150, 150, 100);
+
+		System.out.println("Fin.\nInsertando OPVs...");
+		
+		/* OPV */
+		String op1 = facade.crearPesqueroLigero(0, 590,  50,  50, 100);
+		String op2 = facade.crearPesqueroLigero(0, 590, 150, 150, 100);
+		
+		String ol1 = facade.crearPesqueroLigero(0, 0,  50,  50, 100);
+		String ol2 = facade.crearPesqueroLigero(0, 0, 150, 150, 100);
+		
+		System.out.println("Fin.");
 
 		con.close();
 	}	// main

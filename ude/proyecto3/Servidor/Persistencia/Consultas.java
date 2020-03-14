@@ -2,18 +2,61 @@ package ude.proyecto3.Servidor.Persistencia;
 
 
 public class Consultas {
+	
+		/** Guardar elementos **/
+	
+	/**
+	* Insertar id, nombre, jugador1 y jugador2 de una partida.
+	* @return Devuelve el identificador de la partida guardada.
+	*/
+	public String guardarPartida() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	}	// guardarPartida
+	
+	/**
+	* Devuelve la consulta SQLite para guardar un pesquero de clase "fábrica".
+	*/
+	public String guardarPesqueroFabrica() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Fabrica\", ?, ?, ?, ?, ?)"; 
+	}	// guardarPesqueroFabrica
+	
+	/**
+	* Devuelve la consulta SQLite para guardar un pesquero de clase "ligero".
+	*/
+	public String guardarPesqueroLigero() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Ligero\", ?, ?, ?, ?, ?)"; 
+	}	// guardarPesqueroLigero
+	
+	public String guardarHelicoptero() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Helicoptero\", ?, ?, ?, ?, ?)"; 
+	}	// guardarHelicoptero
+	
+	public String guardarLancha() {
+		return "INSERT INTO Pesqueros VALUES (?, \"Lancha\", ?, ?, ?, ?, ?)"; 
+	}	// guardarLancha
+	
+	/**
+	* Insertar 
+	* @return Devuelve el identificador de la partida guardada.
+	*/
+	public String guardarOPVPesado() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)";
+	}	// guardarOPVPesado
+	
+	/**
+	* Insertar 
+	* @return Devuelve el identificador de la partida guardada.
+	*/
+	public String guardarOPVLigero() {
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
+	}	// guardarOPVLigero
+	
+
 	/**
 	 * Insertar un jugador.
 	 */
 	public String guardarJugador() {
-		return "INSERT INTO Jugadores (Id, Nombre, Correo, Puntaje) VALUES (?, ?, ?, ?)";
-	}	// darUsuarioPorNombre
-	
-	/**
-	 * Eliminar un jugador.
-	 */
-	public String eliminarJugador() {
-		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
+		return "INSERT INTO Jugadores VALUES (?, ?, ?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
 	
 	
@@ -42,7 +85,7 @@ public class Consultas {
 	/**
 	 * Listar las partidas creadas y no iniciadas.
 	 */
-	public String listarPartidasElegibles() {
+	public String listarPartidasCreadas() {
 		return "SELECT (CASE WHEN JugPat IS NULL THEN JugPes ELSE JugPat END), " +
 				"(CASE WHEN JugPat IS NULL THEN 'Pesquero' ELSE 'Patrullero' END), " +
 				"NomPart FROM Partidas";
@@ -80,55 +123,14 @@ public class Consultas {
 	}	// darPartidaPorUsuarios
 
 	
-			/** Guardar elementos **/
-	
-	/**
-	 * Insertar id, nombre, jugador1 y jugador2 de una partida.
-	 * @return Devuelve el identificador de la partida guardada.
-	 */
-	public String guardarPartida() {
-		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	}	// guardarPartida
-	
-	/**
-	 * Devuelve la consulta SQLite para guardar un pesquero de clase "fábrica".
-	 */
-	public String guardarPesqueroFabrica() {
-		return "INSERT INTO Pesqueros VALUES (?, \"Fabrica\", ?, ?, ?, ?, ?)"; 
-	}	// guardarPesqueroFabrica
-	
-	/**
-	 * Devuelve la consulta SQLite para guardar un pesquero de clase "ligero".
-	 */
-	public String guardarPesqueroLigero() {
-		return "INSERT INTO Pesqueros VALUES (?, \"Ligero\", ?, ?, ?, ?, ?)"; 
-	}	// guardarPesqueroLigero
-	
-	public String guardarHelicoptero() {
-		return "INSERT INTO Pesqueros VALUES (?, \"Helicoptero\", ?, ?, ?, ?, ?)"; 
-	}	// guardarHelicoptero
-	
-	public String guardarLancha() {
-		return "INSERT INTO Pesqueros VALUES (?, \"Lancha\", ?, ?, ?, ?, ?)"; 
-	}	// guardarLancha
-	
-	/**
-	 * Insertar 
-	 * @return Devuelve el identificador de la partida guardada.
-	 */
-	public String guardarOPVPesado() {
-		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)";
-	}	// guardarOPVPesado
-	
-	/**
-	 * Insertar 
-	 * @return Devuelve el identificador de la partida guardada.
-	 */
-	public String guardarOPVLigero() {
-		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
-	}	// guardarOPVLigero
-	
 			/** Eliminar elementos **/
+	
+	/**
+	 * Eliminar un jugador.
+	 */
+	public String eliminarJugador() {
+		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
+	}	// darUsuarioPorNombre
 	
 	public String eliminarPorId() {
 		return "DELETE FROM ? WHERE Id = TRIM(?)";

@@ -30,11 +30,12 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 	@Override
 	public void guardar(IConexion icon, PesqueroFabrica p) throws FileNotFoundException, IOException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con;
 		String query;
 		PreparedStatement pstmt;
 		
 		try {
-			Connection con = conSQLite.getConexion();
+			con = conSQLite.getConexion();
 			query = consul.guardarPesqueroFabrica();
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, p.getId()); 

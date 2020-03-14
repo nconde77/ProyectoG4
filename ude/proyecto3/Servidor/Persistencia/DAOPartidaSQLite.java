@@ -169,5 +169,16 @@ public class DAOPartidaSQLite implements IDAOPartida {
       
       return aux;
 	}	// esVacio
+	
+	
+	/**
+	 * lista las partidas creadas que esperan por otro jugador para arrancar.
+	 */
+	public List<Partida> partidasCreadas(IConexion icon) {
+		List<Partida> lista = null;
+		
+		return lista;
+		
+	}	// listarPartidas
 
 }	/* DAOPartida */

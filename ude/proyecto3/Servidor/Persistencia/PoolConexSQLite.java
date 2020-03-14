@@ -39,7 +39,7 @@ public class PoolConexSQLite implements IPoolConexiones {
 		password = pswd;
 		dbDriver = dvr;
 		this.tope = -1;
-		this.tamanio = tamanio;
+		this.tamanio = tam;
 		this.creadas = 0;
 		this.nivelTransaccionalidad = Connection.TRANSACTION_NONE;
 
@@ -51,7 +51,7 @@ public class PoolConexSQLite implements IPoolConexiones {
 	 */
 	public static PoolConexSQLite getPoolConexiones(String url, String usr, String pswd, int tam, String drvr) {
 		if (poolConexiones == null) {
-			poolConexiones = new PoolConexSQLite(url, usr, pswd, 100, drvr);
+			poolConexiones = new PoolConexSQLite(url, usr, pswd, tam, drvr);
 		}	// if
 		return poolConexiones;
 	}	// getPoolConexiones
@@ -66,7 +66,8 @@ public class PoolConexSQLite implements IPoolConexiones {
 				Class.forName("org.sqlite.JDBC");
 				creadas++;
 				nivelTransaccionalidad = (modifica ? Connection.TRANSACTION_SERIALIZABLE : Connection.TRANSACTION_NONE);
-				Connection connection = DriverManager.getConnection(dbURL, user, password);
+				//Connection connection = DriverManager.getConnection(db_driver + "://" + dbURL); //, user, password);
+				Connection connection = DriverManager.getConnection("jdbc:sqlite://home/nconde/eclipse-workspace/servidor/base.db3"); //, user, password);
 				con = new ConexionSQLite(connection);
 				conexiones[++tope] = con;
 			}

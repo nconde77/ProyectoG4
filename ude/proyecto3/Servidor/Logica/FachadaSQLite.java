@@ -11,24 +11,39 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import javax.websocket.Session;
 
 import ude.proyecto3.Servidor.Logica.Partida;
+import ude.proyecto3.Servidor.Servidor;
 import ude.proyecto3.Servidor.Logica.HashConSal;
 import ude.proyecto3.Servidor.Persistencia.IConexion;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 import ude.proyecto3.Servidor.Persistencia.IDAOPartida;
+import ude.proyecto3.Servidor.Persistencia.IDAOOPVLigero;
+import ude.proyecto3.Servidor.Persistencia.IDAOOPVPesado;
+import ude.proyecto3.Servidor.Persistencia.IDAOPesqueroFabrica;
+import ude.proyecto3.Servidor.Persistencia.IDAOPesqueroLigero;
 import ude.proyecto3.Servidor.Persistencia.IFabrica;
 import ude.proyecto3.Servidor.Persistencia.IPoolConexiones;
+import ude.proyecto3.Servidor.Persistencia.PoolConexSQLite;
 
 import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
+	
+	Logger logger = Logger .getLogger(FachadaSQLite.class.getName());
+
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
 	
 	private IDAOJugador daoJugador;
+	private IDAOOPVPesado daoOPVPesado;
+	private IDAOOPVLigero daoOPVLigero;
+	private IDAOPesqueroFabrica daoPesqFabrica;
+	private IDAOPesqueroLigero  daoPesqLigero;
 	private IDAOPartida daoPartida;
+	
 	private IPoolConexiones ipool;
 	
 	
@@ -45,9 +60,20 @@ public class FachadaSQLite implements IFachada {
 		db_url = configuracion.getProperty("db_url");
 		db_factory = configuracion.getProperty("db_factory");
 		
+//		/* Para probar sin compilar el proyecto. */
+//		db_driver  = "jdbc:sqlite";
+//		db_factory = "ude.proyecto3.Servidor.Persistencia.FabricaSQLite";
+//		db_url = "/home/nconde/eclipse-workspace/servidor/base.db3";
+		
+		ipool = PoolConexSQLite.getPoolConexiones(db_url, "", "", 32, db_driver);
+
 		IFabrica fabJuego = (IFabrica) Class.forName(db_factory).newInstance();
 		daoJugador = fabJuego.crearDAOJugador();
 		daoPartida = fabJuego.crearDAOPartida();
+		daoOPVLigero = fabJuego.crearDAOOPVLigero();
+		daoOPVPesado = fabJuego.crearDAOOPVPesado();
+		daoPesqFabrica = fabJuego.crearDAOPesqueroFabrica();
+		daoPesqLigero = fabJuego.crearDAOPesqueroLigero();
 	}	// FachadaSQLite
 	
 	/* De Partida. */
@@ -159,5 +185,65 @@ public class FachadaSQLite implements IFachada {
 	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
 		
 	}	// actPuntajeJugador
+	
+	/**
+	 * Agregar un pesquero fábrica.
+	 */
+	public String crearPesqueroFabrica(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		PesqueroFabrica p;
+		String id = UUID.randomUUID().toString();
+		
+		p = new PesqueroFabrica(id, a, r, x, y, e);
+		daoPesqFabrica.guardar(icon, p);
+		ipool.liberarConexion(icon, true);
+		
+		return id;		
+	}	// crearPesqueroFabrica
+	
+	/**
+	 * Agregar un pesquero ligero.
+	 */
+	public String crearPesqueroLigero(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		PesqueroLigero p;
+		String id = UUID.randomUUID().toString();
+		
+		p = new PesqueroLigero(id, a, r, x, y, e);
+		daoPesqLigero.guardar(icon, p);
+		ipool.liberarConexion(icon, true);
+		
+		return id;
+	}	// crearPesqueroLigero
+	
+	/**
+	 * Agregar un patrullero ligero.
+	 */
+	public String crearOPVLigero(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		OPVLigero o;
+		String id = UUID.randomUUID().toString();
+		
+		o = new OPVLigero(id, a, r, x, y, e);
+		daoOPVLigero.guardar(icon, o);
+		ipool.liberarConexion(icon, true);
+		
+		return id;
+	}	// crearOPVLigero
+	
+	/**
+	 * Agregar un patrullero pesado.
+	 */
+	public String crearOPVPesado(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		OPVPesado o;
+		String id = UUID.randomUUID().toString();
+		
+		o = new OPVPesado(id, a, r, x, y, e);
+		daoOPVPesado.guardar(icon, o);
+		ipool.liberarConexion(icon, true);
+		
+		return id;		
+	}	// crearPesqueroFabrica
 
 }	/* FachadaSQLite */

@@ -46,11 +46,11 @@ public class Servidor {
 	private IPoolConexiones ipool;
 	private IDAOJugador jugPersistencia;
 	private IDAOPartida partPersistencia;
+	private IFachada facha;
 	
 	static final int PE_MAX_COMB = 100;
 	static final int PA_MAX_COMB = 100;
 	static final int MAX_TIEMPO  = 180;	// 180 s = 3 min.
-	
 	
 	/*
 	 * Servidor.
@@ -67,6 +67,7 @@ public class Servidor {
 		db_factory = configuracion.getProperty("db_factory");
 		
 		IFabrica fabPartida = (IFabrica) Class.forName(db_factory).newInstance();
+		facha = new FachadaSQLite();
 	}	// Servidor
 	
 	/*
@@ -122,7 +123,14 @@ public class Servidor {
 				break;
 			case "PAU_PART":
 				break;
+			case "LIS_PART":
+				// método para listar partidas.
+				break;
 			case "FIN_PART":
+				break;
+			case "ALTA_USU":
+				altaUsuario((String) jObj.get("nombre"), (String) jObj.get("correo"),
+					(String) jObj.get("contrasena"));
 				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
@@ -159,7 +167,7 @@ public class Servidor {
 		ipool.liberarConexion(con, true);
 	}	// guardarPartida
 	
-	public void iniciarPartida(int id, String estado) throws SQLException {
+	public void iniciarPartida(String id, String estado) throws SQLException {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		part = partPersistencia.encontrar(con, id);
@@ -181,7 +189,7 @@ public class Servidor {
 	 * @param id  El identificador de la partida a terminar.
 	 * @param est Estado actual de la partida a terminar.
 	 */
-	public void terminarPartida(int id, String est) throws SQLException {
+	public void terminarPartida(String id, String est) throws SQLException {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		Jugador jPat, jPes;
@@ -208,4 +216,13 @@ public class Servidor {
 		sesiones.remove(sesion);
 	}	// alCerrar
 	
+	
+	private String altaUsuario(String nom, String cor, String pas) throws FileNotFoundException, SQLException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		String id = null;
+		
+		id = facha.crearJugador(nom, cor, pas);
+		return id;
+	}	// altaUsuario
+
 }
