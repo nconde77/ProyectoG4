@@ -153,9 +153,9 @@ public class DAOOPVLigeroSQLite implements IDAOOPVLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }	// if
         
-        query = consul.listarPorId();
+        query = consul.listarOPVs();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, "OPVLigero");
+    	pstmt.setString(1, "Patrulleros");
     	rs = pstmt.executeQuery();
     	aux = !(rs.isBeforeFirst());
     	rs.close();

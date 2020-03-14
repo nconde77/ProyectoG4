@@ -2,15 +2,21 @@ package ude.proyecto3.Servidor.Logica;
 
 
 public class Jugador {
-	private String id, nombre, correo;
+	private String id, nombre, correo, contrasenia, sal;
 	long puntaje;
 	
-	public Jugador(String i, String n, String c) {
+	public Jugador(String i, String n, String c, String p, String s) {
 		id = i;
 		nombre = n;
 		correo = c;
+		contrasenia = p;
+		sal = s;
 		puntaje = 0;
 	}	// Jugador
+	
+	public String getId() {
+		return id;
+	}	// getId
 	
 	public String getNombre() {
 		return nombre;
@@ -18,15 +24,19 @@ public class Jugador {
 	
 	public String getCorreo() {
 		return correo;
+	}	// getCorreo
+	
+	public String getContrasenia() {
+		return contrasenia;
+	}	// getNombre
+	
+	public String getSal() {
+		return sal;
 	}	// getNombre
 	
 	public long getPuntaje() {
 		return puntaje;
-	}	// getNombre
-	
-	public String getId() {
-		return id;
-	}	// getNombre
+	}	// getPuntaje
 	
 	public void sumarPuntos(long p) {
 		puntaje += p;
@@ -42,7 +52,7 @@ public class Jugador {
 	
 	public String toJson() {
 		return "{ \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo + 
-			"\", \"puntaje\": " + puntaje + ", \"id\": " + id + " }";
+			"\", \"contraseña\": " + contrasenia + "\", \"puntaje\": " + puntaje + ", \"id\": " + id + " }";
 	}	// toJson
 	
 }	/* Jugador */

@@ -79,7 +79,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public Partida encontrar(IConexion icon, int n) throws SQLException {
+	public Partida encontrar(IConexion icon, String id) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -96,7 +96,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
     	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
         pstmt.setString(1, "Partidas");
-        pstmt.setInt(2, n);
+        pstmt.setString(2, id);
     	rs = pstmt.executeQuery();
   	
   	// Si el jugador existe se crea el objeto y se lo devuelve.
@@ -120,7 +120,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
 	@Override
-	public void borrar(IConexion icon, int i) throws SQLException {
+	public void borrar(IConexion icon, String id) throws SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 
@@ -131,7 +131,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
           query = consul.eliminarPorId();
           pstmt = con.prepareStatement(query);
           pstmt.setString(1, "PesqueroFabrica");
-          pstmt.setInt(2, i);
+          pstmt.setString(2, id);
           pstmt.executeUpdate();
           pstmt.close();
       }

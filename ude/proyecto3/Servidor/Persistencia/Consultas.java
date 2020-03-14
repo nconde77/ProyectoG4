@@ -2,38 +2,74 @@ package ude.proyecto3.Servidor.Persistencia;
 
 
 public class Consultas {
-	/*
+	/**
 	 * Insertar un jugador.
 	 */
 	public String guardarJugador() {
 		return "INSERT INTO Jugadores (Id, Nombre, Correo, Puntaje) VALUES (?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
 	
-	/*
+	/**
 	 * Eliminar un jugador.
 	 */
 	public String eliminarJugador() {
 		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
 	}	// darUsuarioPorNombre
 	
+	
+			/** Listas de elementos **/
+	/**
+	 * Listar los jugadores.
+	 */
+	public String listarJugadores() {
+		return "SELECT Id, Nombre FROM Jugadores ORDER BY Id";
+	}	// darUsuarioPorNombre
+	
+	/**
+	 * Listar los top ? jugadores.
+	 */
+	public String topJugadores() {
+		return "SELECT Nombre, Puntaje FROM Jugadores ORDER BY Puntaje LIMIT ?";
+	}	// darUsuarioPorNombre
+	
+	/**
+	 * Listar por Id en la tabla que se indique.
+	 */
+	public String listarPorId() {
+		return "SELECT * FROM ? ORDER BY Id";
+	}	// darUsuarioPorNombre
+	
+	/**
+	 * Listar las partidas creadas y no iniciadas.
+	 */
 	public String listarPartidasElegibles() {
 		return "SELECT (CASE WHEN JugPat IS NULL THEN JugPes ELSE JugPat END), " +
 				"(CASE WHEN JugPat IS NULL THEN 'Pesquero' ELSE 'Patrullero' END), " +
 				"NomPart FROM Partidas";
-	}
+	}	// listarPartidasElegibles
 	
-	/*
+	/**
+	 * Listar pesqueros por tipo.
+	 */
+	public String listarPesqueros() {
+		return "SELECT * FROM Pesqueros WHERE Tipo = ?";
+	}	// listarTodos
+	
+	/**
+	 * Listar OPVs por tipo.
+	 */
+	public String listarOPVs() {
+		return "SELECT * FROM Patrulleros WHERE Tipo = ?";
+	}	// listarTodos
+	
+	
+			/** Buscar elementos  */
+	
+	/**
 	 * Buscar un usuario por su nombre.
 	 */
 	public String darJugadorPorNombre() {
 		return "SELECT * FROM Usuarios WHERE Nombre = UPPER(TRIM(?))";
-	}	// darUsuarioPorNombre
-	
-	/*
-	 * Buscar un usuario por su nombre.
-	 */
-	public String listarJugadores() {
-		return "SELECT Id,Nombre FROM Jugadores ORDER BY Id";
 	}	// darUsuarioPorNombre
 	
 	/**
@@ -42,6 +78,9 @@ public class Consultas {
 	public String darPartidaPorJugadores() {
 		return "SELECT * FROM Partidas WHERE Jugador1 = ? AND Jugador2 = ?";
 	}	// darPartidaPorUsuarios
+
+	
+			/** Guardar elementos **/
 	
 	/**
 	 * Insertar id, nombre, jugador1 y jugador2 de una partida.
@@ -56,7 +95,7 @@ public class Consultas {
 	 */
 	public String guardarPesqueroFabrica() {
 		return "INSERT INTO Pesqueros VALUES (?, \"Fabrica\", ?, ?, ?, ?, ?)"; 
-	}
+	}	// guardarPesqueroFabrica
 	
 	/**
 	 * Devuelve la consulta SQLite para guardar un pesquero de clase "ligero".
@@ -72,13 +111,14 @@ public class Consultas {
 	public String guardarLancha() {
 		return "INSERT INTO Pesqueros VALUES (?, \"Lancha\", ?, ?, ?, ?, ?)"; 
 	}	// guardarLancha
+	
 	/**
 	 * Insertar 
 	 * @return Devuelve el identificador de la partida guardada.
 	 */
 	public String guardarOPVPesado() {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)";
-	}
+	}	// guardarOPVPesado
 	
 	/**
 	 * Insertar 
@@ -86,29 +126,16 @@ public class Consultas {
 	 */
 	public String guardarOPVLigero() {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
-	}
+	}	// guardarOPVLigero
 	
-//	public String encontrarPesquero() {
-//		return "SELECT * FROM ? WHERE id = ?"; 
-//	}
-//	public String eliminarPesqueroLigero() {
-//		return "DELETE FROM PesqueroLigero WHERE id = TRIM(?)";
-//	}
-	public String listarPorId() {
-		return "SELECT Id, Tipo FROM ? ORDER BY Id";
-	}
-//	public String encontrarPesqueroFabrica() {
-//		return "SELECT * FROM PesqueroFabrica WHERE id = ?"; 
-//	}
+			/** Eliminar elementos **/
+	
 	public String eliminarPorId() {
-		return "DELETE FROM ? WHERE id = TRIM(?)";
-	}
-//	public String listarPesqueroFabrica() {
-//		return "SELECT Id FROM PesqueroFabrica ORDER BY Id";
-//	}
-
-	public String encontrarPorId() {
-		return "SELECT * FROM ? WHERE id = ?";
-	}
+		return "DELETE FROM ? WHERE Id = TRIM(?)";
+	}	// eliminarPorId
 	
+	public String encontrarPorId() {
+		return "SELECT * FROM ? WHERE Id = ?";
+	}	// encontrarPorId
+
 }	/* Consultas */

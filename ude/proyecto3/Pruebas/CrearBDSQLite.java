@@ -25,6 +25,7 @@ public class CrearBDSQLite {
 					"(Id      VARCHAR PRIMARY KEY NOT NULL," +
 					" Nombre  CHARACTER(64)  NOT NULL," +
 					" Correo  CHARACTER(128) NOT NULL," +
+					" Contrasenia VARCHAR NOT NULL," +
 					" Puntaje INT       NOT NULL);";
 			System.out.println("Update 1: " + sql);
 			stmt.executeUpdate(sql);

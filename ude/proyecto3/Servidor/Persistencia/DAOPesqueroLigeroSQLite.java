@@ -80,7 +80,7 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public PesqueroLigero encontrar(IConexion icon, int n) throws SQLException {
+	public PesqueroLigero encontrar(IConexion icon, String id) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -95,10 +95,10 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.encontrarPesquero();
+    	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
-        pstmt.setString(1, "PesqueroLigero");
-        pstmt.setInt(2, n);
+        pstmt.setString(1, "Pesqueros");
+        pstmt.setString(2, id);
     	rs = pstmt.executeQuery();
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
@@ -123,7 +123,7 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
 	@Override
-	public void borrar(IConexion icon, int i) throws SQLException {
+	public void borrar(IConexion icon, String id) throws SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 
@@ -131,10 +131,10 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
 		PreparedStatement pstmt;
 		
         try {
-            query = consul.eliminarPesquero();
+            query = consul.eliminarPorId();
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, "PesqueroLigero");
-            pstmt.setInt(2, i);
+            pstmt.setString(1, "Pesqueros");
+            pstmt.setString(2, id);
             pstmt.executeUpdate();
             pstmt.close();
         }
@@ -162,9 +162,9 @@ public class DAOPesqueroLigeroSQLite implements IDAOPesqueroLigero {
         	throw new SQLException("No hay conexiones disponibles.");
         }	// if
         
-        query = consul.listarPesquero();
+        query = consul.listarPesqueros();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setString(1, "PesqueroLigero");
+    	pstmt.setString(1, "Ligero");
     	rs = pstmt.executeQuery();
     	aux = !(rs.isBeforeFirst());
     	rs.close();

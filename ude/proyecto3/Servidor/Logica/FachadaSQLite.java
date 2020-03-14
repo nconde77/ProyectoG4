@@ -15,6 +15,7 @@ import java.util.UUID;
 import javax.websocket.Session;
 
 import ude.proyecto3.Servidor.Logica.Partida;
+import ude.proyecto3.Servidor.Logica.HashConSal;
 import ude.proyecto3.Servidor.Persistencia.IConexion;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 import ude.proyecto3.Servidor.Persistencia.IDAOPartida;
@@ -56,6 +57,7 @@ public class FachadaSQLite implements IFachada {
 	 * @param nom Nombre de la partida.
 	 * @param bando Bando que toma el jugador que crea la partida.
 	 */
+	@Override
 	public String crearPartida(String nom, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException, FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
 		String id = UUID.randomUUID().toString();
@@ -71,6 +73,7 @@ public class FachadaSQLite implements IFachada {
 	 * Guarda una partida cuando se pausa o termina.
 	 * @param part El objeto &quot;Partida&quot; a guardar.
 	 */
+	@Override
 	 public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
 		//Partida part;
@@ -86,8 +89,8 @@ public class FachadaSQLite implements IFachada {
 	 * @param id El id de la partida.
 	 * @param estado El estado previo de la partida, antes de (re)iniciarla.
 	 */
-	
-	public void iniciarPartida(int id, String estado) throws SQLException {
+	@Override
+	public void iniciarPartida(String id, String estado) throws SQLException {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		part = daoPartida.encontrar(con, id);
@@ -95,6 +98,7 @@ public class FachadaSQLite implements IFachada {
 		ipool.liberarConexion(con, true);
 	}	// iniciarPartida
 	
+	@Override
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException { //String nom, String estado
 		IConexion con = ipool.obtenerConexion(true);
 		daoPartida.guardar(con, part);
@@ -109,7 +113,8 @@ public class FachadaSQLite implements IFachada {
 	 * @param id  El identificador de la partida a terminar.
 	 * @param est Estado actual de la partida a terminar.
 	 */
-	public void terminarPartida(int id, String est) throws SQLException {
+	@Override
+	public void terminarPartida(String id, String est) throws SQLException {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		Jugador jPat, jPes;
@@ -129,12 +134,15 @@ public class FachadaSQLite implements IFachada {
 	 * @param nom Nombre del jugador.
 	 * @param bando Bando que eligió: patrullero o pesquero.
 	 */
-	public String crearJugador(String nom, String correo) throws SQLException, FileNotFoundException, IOException {
+	@Override
+	public String crearJugador(String nom, String correo, String csenia) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
 		Jugador j;
-		String id = UUID.fromString(nom).toString();
+		String id = UUID.randomUUID().toString();
+		String sal = HashConSal.getSalt(32);
+		String hCsenia = HashConSal.generateSecurePassword(csenia, sal);
 		
-		j = new Jugador(id, nom, correo);
+		j = new Jugador(id, nom, correo, hCsenia, sal);
 		daoJugador.guardar(icon, j);
 		ipool.liberarConexion(icon, true);
 		
@@ -147,13 +155,8 @@ public class FachadaSQLite implements IFachada {
 	 * @param id El identificador del jugador.
 	 * @param ptosJugador El puntaje del jugador (entero).
 	 */
-	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
-		
-	}	// actPuntajeJugador
-
 	@Override
-	public void actPuntajeJugador(long id, int ptosJPat) throws SQLException {
-		// TODO Auto-generated method stub
+	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
 		
 	}	// actPuntajeJugador
 

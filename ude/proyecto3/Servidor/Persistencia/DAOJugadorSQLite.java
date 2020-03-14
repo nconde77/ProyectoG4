@@ -102,7 +102,9 @@ public class DAOJugadorSQLite implements IDAOJugador {
     	if (rs.next()) {
     		j = new Jugador(rs.getString("Id"),
     				rs.getString("Nombre"), 
-    				rs.getString("Correo"));
+    				rs.getString("Correo"),
+    				rs.getString("Contrasenia"),
+    				rs.getString("Sal"));
     		j.sumarPuntos(rs.getLong("Puntaje"));
     	}
     	rs.close();

@@ -153,7 +153,7 @@ public class DAOOPVPesadoSQLite implements IDAOOPVPesado {
 			throw new SQLException("No hay conexiones disponibles.");
 		}	// if
 		
-		query = consul.listarPesquero();
+		query = consul.listarPesqueros();
 		pstmt = con.prepareStatement(query);
 		pstmt.setString(1, "PesqueroFabrica");
 		rs = pstmt.executeQuery();

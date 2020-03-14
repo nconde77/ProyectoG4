@@ -81,7 +81,7 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 	
 	// encontrar por nombre o correo-e.
 	@Override
-	public PesqueroFabrica encontrar(IConexion icon, int n) throws SQLException {
+	public PesqueroFabrica encontrar(IConexion icon, String id) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -96,10 +96,10 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.encontrarPesquero();
+    	query = consul.encontrarPorId();
     	pstmt = con.prepareStatement(query);
         pstmt.setString(1, "PesqueroFabrica");
-        pstmt.setInt(2, n);
+        pstmt.setString(2, id);
     	rs = pstmt.executeQuery();
   	
   	// Si el jugador existe se crea el objeto y se lo devuelve.
@@ -124,27 +124,24 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
 	@Override
-	public void borrar(IConexion icon, int i) throws SQLException {
+	public void borrar(IConexion icon, String id) throws SQLException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 
 		String query;
 		PreparedStatement pstmt;
 		
-      try {
-          query = consul.eliminarPesquero();
-          pstmt = con.prepareStatement(query);
-          pstmt.setString(1, "PesqueroFabrica");
-          pstmt.setInt(2, i);
-          pstmt.executeUpdate();
-          pstmt.close();
-      }
-      catch (SQLException e) {
-          System.out.println("Error al insertar un pesquero fabrica .\n" + e.getMessage());
-      }
-      finally {
-          con.close();
-      }
+		try {
+			query = consul.eliminarPorId();
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, "Fabrica");
+			pstmt.setString(2, id);
+			pstmt.executeUpdate();
+			pstmt.close();
+		}
+		catch (SQLException e) {
+			System.out.println("Error al eliminar un pesquero fabrica .\n" + e.getMessage());
+		}	// try-catch
 	}	// borrar
 	
 	/*
@@ -166,9 +163,9 @@ public class DAOPesqueroFabricaSQLite implements IDAOPesqueroFabrica {
       	throw new SQLException("No hay conexiones disponibles.");
       }	// if
       
-    query = consul.listarPesquero();
+    query = consul.listarPesqueros();
   	pstmt = con.prepareStatement(query);
-  	pstmt.setString(1, "PesqueroFabrica");
+  	pstmt.setString(1, "Fabrica");
   	rs = pstmt.executeQuery();
   	aux = !(rs.isBeforeFirst());
   	rs.close();
