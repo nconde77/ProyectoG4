@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.websocket.Session;
@@ -33,7 +34,7 @@ import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
 	
-	Logger logger = Logger .getLogger(FachadaSQLite.class.getName());
+	Logger logger = Logger.getLogger(FachadaSQLite.class.getName());
 
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
 	
@@ -65,15 +66,23 @@ public class FachadaSQLite implements IFachada {
 //		db_factory = "ude.proyecto3.Servidor.Persistencia.FabricaSQLite";
 //		db_url = "/home/nconde/eclipse-workspace/servidor/base.db3";
 		
-		ipool = PoolConexSQLite.getPoolConexiones(db_url, "", "", 32, db_driver);
+		logger.log(Level.INFO, db_driver + ":" + cataHome + "/" + db_url);
+		ipool = PoolConexSQLite.getPoolConexiones(cataHome + "/" + db_url, "", "", 32, db_driver);
 
 		IFabrica fabJuego = (IFabrica) Class.forName(db_factory).newInstance();
+    	logger.log(Level.INFO, "Fachada IFabrica\n");
 		daoJugador = fabJuego.crearDAOJugador();
+		logger.log(Level.INFO, "Fachada DAO Jugador");
 		daoPartida = fabJuego.crearDAOPartida();
+		logger.log(Level.INFO, "Fachada DAO Partida");
 		daoOPVLigero = fabJuego.crearDAOOPVLigero();
+		logger.log(Level.INFO, "Fachada DAO OPV Lig");
 		daoOPVPesado = fabJuego.crearDAOOPVPesado();
+		logger.log(Level.INFO, "Fachada DAO OPV Pes");
 		daoPesqFabrica = fabJuego.crearDAOPesqueroFabrica();
+		logger.log(Level.INFO, "Fachada Pes Fab");
 		daoPesqLigero = fabJuego.crearDAOPesqueroLigero();
+		logger.log(Level.INFO, "Fachada Pes Lig");
 	}	// FachadaSQLite
 	
 	/* De Partida. */
@@ -163,11 +172,14 @@ public class FachadaSQLite implements IFachada {
 	@Override
 	public String crearJugador(String nom, String correo, String csenia) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
+		logger.log(Level.INFO, "ipool.obtenerConexion\n");
 		Jugador j;
+		logger.log(Level.INFO, "Jugador\n");
 		String id = UUID.randomUUID().toString();
 		String sal = HashConSal.getSalt(32);
 		String hCsenia = HashConSal.generateSecurePassword(csenia, sal);
 		
+		logger.log(Level.INFO, "crearJugador\n");
 		j = new Jugador(id, nom, correo, hCsenia, sal);
 		daoJugador.guardar(icon, j);
 		ipool.liberarConexion(icon, true);

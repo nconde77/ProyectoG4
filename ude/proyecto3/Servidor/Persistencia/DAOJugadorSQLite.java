@@ -8,10 +8,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import ude.proyecto3.Servidor.Logica.FachadaSQLite;
 import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
@@ -19,6 +19,8 @@ import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 
 public class DAOJugadorSQLite implements IDAOJugador {
 	private Consultas consul;
+	
+	Logger logger = Logger.getLogger(DAOJugadorSQLite.class.getName());
 	
 	public DAOJugadorSQLite() {
 		consul = new Consultas();
@@ -28,14 +30,18 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	public void guardar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite) icon;
+    	logger.log(Level.INFO, "DAO guardar\n");
 		Connection con = conSQLite.getConexion();
+    	logger.log(Level.INFO, "DAO con\n");
 		String query;
 		PreparedStatement pstmt;
+    	logger.log(Level.INFO, "DAO guardar\n");
 		
         try {
             // Insertar el jugador en la base.
         	query = consul.guardarJugador();
-            pstmt = con.prepareStatement(query);
+        	logger.log(Level.INFO, "guardar: " + query + "\n");
+        	pstmt = con.prepareStatement(query);
             pstmt.setString(1, j.getId());
             pstmt.setString(2, j.getNombre());
             pstmt.setString(3, j.getCorreo());

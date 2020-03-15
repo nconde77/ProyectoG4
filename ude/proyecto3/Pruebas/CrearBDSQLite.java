@@ -12,7 +12,7 @@ public class CrearBDSQLite {
 	public static void main(String args[]) throws SQLException {
 		Connection conn = null;
 		Statement stmt = null;
-		String url = "base.db3";
+		String url = "/home/nconde/eclipse-workspace/servidor/WebContent/base.db3";
 		
 		try {	// Conectar con la BD e inicializarla.
 			Class.forName("org.sqlite.JDBC");
@@ -28,11 +28,10 @@ public class CrearBDSQLite {
 					" NomUsu       CHARACTER(64)  NOT NULL," +
 					" Bando        CHARACTER(128) NOT NULL," +
 					" PtosJPat     INT NOT NULL," +
-					" PtosJes      INT NOT NULL," +
+					" PtosJPes     INT NOT NULL," +
 					" EstadoId     VARCHAR NOT NULL," + //ver si es necesario indicar campo como FK.
-					" CombusJPes   INT NOT NULL," +
 					" CombusJPat   INT NOT NULL,"  +
-					" PtosJes  	   INT NOT NULL,"  +
+					" CombusJPes   INT NOT NULL," +
 					" Tiempo       INT   NOT NULL);";
 			System.out.println("Update 1: " + sql);
 			stmt.executeUpdate(sql);

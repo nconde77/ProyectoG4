@@ -8,6 +8,8 @@
 
 package ude.proyecto3.Servidor.Persistencia;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ public class PoolConexSQLite implements IPoolConexiones {
 	private IConexion[] conexiones;
 	private static PoolConexSQLite poolConexiones;
 	
+	static Logger logger = Logger.getLogger(PoolConexSQLite.class.getName());
 	
 	/* 
 	 * Constructor de la clase. Realiza la carga del driver, solicita memoria para el arreglo con tope e inicializa
@@ -66,8 +69,8 @@ public class PoolConexSQLite implements IPoolConexiones {
 				Class.forName("org.sqlite.JDBC");
 				creadas++;
 				nivelTransaccionalidad = (modifica ? Connection.TRANSACTION_SERIALIZABLE : Connection.TRANSACTION_NONE);
-				//Connection connection = DriverManager.getConnection(db_driver + "://" + dbURL); //, user, password);
-				Connection connection = DriverManager.getConnection("jdbc:sqlite://home/nconde/eclipse-workspace/servidor/base.db3"); //, user, password);
+				Connection connection = DriverManager.getConnection(dbDriver + "://" + dbURL); //, user, password);
+				//Connection connection = DriverManager.getConnection("jdbc:sqlite://home/nconde/eclipse-workspace/servidor/base.db3"); //, user, password);
 				con = new ConexionSQLite(connection);
 				conexiones[++tope] = con;
 			}
