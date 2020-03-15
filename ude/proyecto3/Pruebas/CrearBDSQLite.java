@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 
+import ude.proyecto3.Servidor.Logica.Partida;
+
 
 public class CrearBDSQLite {
 	public static void main(String args[]) throws SQLException {
@@ -19,6 +21,21 @@ public class CrearBDSQLite {
 			stmt = conn.createStatement();
 			
 			System.out.println("Conexión a la base " + url + " establecida.");
+			
+			/* Tabla de partida */
+			sql = "CREATE TABLE Partida " +
+					"(Id           VARCHAR PRIMARY KEY NOT NULL," +
+					" NomUsu       CHARACTER(64)  NOT NULL," +
+					" Bando        CHARACTER(128) NOT NULL," +
+					" PtosJPat     INT NOT NULL," +
+					" PtosJes      INT NOT NULL," +
+					" EstadoId     VARCHAR NOT NULL," + //ver si es necesario indicar campo como FK.
+					" CombusJPes   INT NOT NULL," +
+					" CombusJPat   INT NOT NULL,"  +
+					" PtosJes  	   INT NOT NULL,"  +
+					" Tiempo       INT   NOT NULL);";
+			System.out.println("Update 1: " + sql);
+			stmt.executeUpdate(sql);
 			
 			/* Tabla de jugadores */
 			sql = "CREATE TABLE Jugadores " +
