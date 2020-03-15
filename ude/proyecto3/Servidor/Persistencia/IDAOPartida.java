@@ -16,4 +16,5 @@ public interface IDAOPartida {
 	public void borrar(IConexion icon, String id) throws SQLException;
 	public boolean esVacio(IConexion icon) throws SQLException;
 	public List<Partida> partidasCreadas(IConexion icon);
+	public List<Partida> partidaPorId(IConexion icon, String id) throws SQLException;
 }

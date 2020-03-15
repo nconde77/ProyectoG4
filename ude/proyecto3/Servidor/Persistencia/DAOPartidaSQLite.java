@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import ude.proyecto3.Servidor.Logica.EstadoPartida;
 import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
 import ude.proyecto3.Servidor.Logica.Partida;
@@ -179,6 +180,59 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		
 		return lista;
 		
-	}	// listarPartidas
+	}// listarPartidas
+	
+	public List<Partida> partidaPorId(IConexion icon, String id) throws SQLException{
+		List<Partida> lista = null;
+		// Obtener una conexion concreta SQLite a la base.
+				ConexionSQLite conSQLite = (ConexionSQLite)icon;
+				Connection con = conSQLite.getConexion();
+				
+				PreparedStatement pstmt;
+				ResultSet rs;
+				String query;
+		        Partida p = null;
+		        
+		        if (con == null) {
+		        	throw new SQLException("No hay conexiones disponibles.");
+		        }
+		        
+		    	query = consul.partidasPorId();
+		    	pstmt = con.prepareStatement(query);
+		        pstmt.setString(1,id);
+		        rs = pstmt.executeQuery();
+		  	
+		  	// Si el jugador existe se crea el objeto y se lo devuelve.
+		  	if (rs.next()) {
+		  				p = new Partida(rs.getString("id"), 
+		  					rs.getString("nomUsu"),
+			  				rs.getString("bando"),
+			  				rs.getInt("ptosJPat"),
+			  				rs.getInt("ptosJPes"),
+			  				obtenerEstadoId(rs.getString("estadoId")),
+			  				rs.getInt("combusJPes"),
+			  				rs.getInt("combusJPat"),
+			  				rs.getInt("tiempo"));
+		  				lista.add(p);
+		  	}
+		  	rs.close();
+		  	pstmt.close();
+		return lista;		
+	}
+
+	private EstadoPartida obtenerEstadoId(String estado) {
+		switch (estado) {
+			case "CREADA":
+				return EstadoPartida.CREADA;
+			case "INICIADA":
+	        	return EstadoPartida.INICIADA;
+	        case "PAUSADA":
+	            return EstadoPartida.PAUSADA;
+	        case "TERMINADA":
+	            return EstadoPartida.TERMINADA;
+	        default: 
+	        	return null;	       
+		}
+	}
 
 }	/* DAOPartida */

@@ -139,5 +139,9 @@ public class Consultas {
 	public String encontrarPorId() {
 		return "SELECT * FROM ? WHERE Id = ?";
 	}	// encontrarPorId
+	
+	public String partidasPorId(){
+		return "SELECT * FROM Partidas WHERE Id = ?";
+	}	// encontrarPorId
 
 }	/* Consultas */
