@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -156,6 +157,13 @@ public class Servidor {
 		ipool.liberarConexion(con, true);
 	}	// crearPartida
 	
+	public void listarPartida(String idPart) throws SQLException, FileNotFoundException, IOException {
+		IConexion con = ipool.obtenerConexion(true);
+		Partida part = new Partida();
+		List<Partida> lista = partPersistencia.partidaPorId(con,part.getId());
+		partidas.put(part.getId(), part);
+		ipool.liberarConexion(con, true);
+	}	//listarPartida
 	
 	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
