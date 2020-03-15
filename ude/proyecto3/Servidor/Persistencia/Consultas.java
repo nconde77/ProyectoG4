@@ -144,4 +144,8 @@ public class Consultas {
 		return "SELECT * FROM Partidas WHERE Id = ?";
 	}	// encontrarPorId
 
+	public String partidasXEstado() {
+		return "SELECT * FROM Partidas WHERE EstadoId = ?";
+	}
+
 }	/* Consultas */

@@ -174,11 +174,44 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	
 	/**
 	 * lista las partidas creadas que esperan por otro jugador para arrancar.
+	 * @throws SQLException 
 	 */
-	public List<Partida> partidasCreadas(IConexion icon) {
+	public List<Partida> partidasCreadas(IConexion icon) throws SQLException {
 		List<Partida> lista = null;
-		
-		return lista;
+		// Obtener una conexion concreta SQLite a la base.
+				ConexionSQLite conSQLite = (ConexionSQLite)icon;
+				Connection con = conSQLite.getConexion();
+				
+				PreparedStatement pstmt;
+				ResultSet rs;
+				String query;
+		        Partida p = null;
+		        
+		        if (con == null) {
+		        	throw new SQLException("No hay conexiones disponibles.");
+		        }
+		        
+		    	query = consul.partidasXEstado();
+		    	pstmt = con.prepareStatement(query);
+		        pstmt.setString(1,"CREADA");
+		        rs = pstmt.executeQuery();
+		  	
+		  	// Si el jugador existe se crea el objeto y se lo devuelve.
+		  	if (rs.next()) {
+		  				p = new Partida(rs.getString("id"), 
+		  					rs.getString("nomUsu"),
+			  				rs.getString("bando"),
+			  				rs.getInt("ptosJPat"),
+			  				rs.getInt("ptosJPes"),
+			  				obtenerEstadoId(rs.getString("estadoId")),
+			  				rs.getInt("combusJPes"),
+			  				rs.getInt("combusJPat"),
+			  				rs.getInt("tiempo"));
+		  				lista.add(p);
+		  	}
+		  	rs.close();
+		  	pstmt.close();
+		return lista;		
 		
 	}// listarPartidas
 	
