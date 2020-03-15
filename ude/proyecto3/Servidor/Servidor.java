@@ -127,6 +127,7 @@ public class Servidor {
 			case "PAU_PART":
 				break;
 			case "LIS_PART":
+				listarPartidasCreadas();
 				break;
 			case "FIN_PART":
 				break;
@@ -135,6 +136,7 @@ public class Servidor {
 					(String) jObj.get("contrasena"));
 				break;
 			case "LOGIN":
+				loginUsuario((String) jObj.get("nombre"), sesion);
 				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
@@ -143,8 +145,20 @@ public class Servidor {
 	}	// cuandoMensaje
 	
 	
+	@OnError
+	public void cuandoError(Throwable t) {
+		logger.log(Level.SEVERE, t.getMessage());
+	}	// cuandoError
+	
+	
+	@OnClose
+	public void alCerrar(Session sesion, CloseReason cr) {
+		logger.log(Level.INFO, "Cerrando sesión " + sesion.getId() + " por " + cr.toString() + ".\n");
+		sesiones.remove(sesion);
+	}	// alCerrar
+	
+	
 	/*
-	 * crearPartida.
 	 * Crear una partida nueva a partir de datos en mensaje JSON.
 	 * @param nom Nombre de la partida.
 	 * @param bando Bando que toma el jugador que crea la partida.
@@ -160,13 +174,17 @@ public class Servidor {
 		ipool.liberarConexion(con, true);
 	}	// crearPartida
 	
-	public List<Partida> listarPartidaCreadas() throws SQLException, FileNotFoundException, IOException {
-		IConexion con = ipool.obtenerConexion(true);
-		//Partida part = new Partida();
-		List<Partida> lista = partPersistencia.partidasCreadas(con);
+	/**
+	 * Devuelve una cadena con un array JSON conteniendo las partidas creadas a las
+	 * que se puede unir.
+	 * @return String
+	 * @throws SQLException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public String listarPartidasCreadas() throws SQLException, FileNotFoundException, IOException {
+		String lista = null;
 		
-		//partidas.put(part.getId(), part);
-		ipool.liberarConexion(con, true);
 		return lista;
 	}	//listarPartida
 	
@@ -216,19 +234,6 @@ public class Servidor {
 		partidas.remove(part.getId());
 		ipool.liberarConexion(con, true);
 	}	// terminarPartida
-		
-	@OnError
-	public void cuandoError(Throwable t) {
-		logger.log(Level.SEVERE, "cuandoError: " + t.getMessage());
-	}	// cuandoError
-	
-	
-	@OnClose
-	public void alCerrar(Session sesion, CloseReason cr) {
-		logger.log(Level.INFO, "Cerrando sesión " + sesion.getId() + " por " + cr.toString() + ".\n");
-		sesiones.remove(sesion);
-	}	// alCerrar
-	
 	
 	private String altaUsuario(String nom, String cor, String pas) throws FileNotFoundException, SQLException, IOException {
 		String id = null;
@@ -238,5 +243,18 @@ public class Servidor {
 
 		return id;
 	}	// altaUsuario
+	
+	private void loginUsuario(String nom, Session s) throws IOException, SQLException {
+		String resp = "{\"login\": ";
+		
+		if (facha.loginJugador(nom)) {
+			resp += "\"true\" }";
+		}
+		else {
+			resp += "\"false\" }";
+		}	// if
+		
+		s.getBasicRemote().sendText(resp);
+	}	// loginUsuario
 
-}
+}	/* Servidor */

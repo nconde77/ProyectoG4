@@ -33,18 +33,15 @@ import ude.proyecto3.Servidor.Persistencia.PoolConexSQLite;
 import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
-	
 	Logger logger = Logger.getLogger(FachadaSQLite.class.getName());
 
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
-	
 	private IDAOJugador daoJugador;
 	private IDAOOPVPesado daoOPVPesado;
 	private IDAOOPVLigero daoOPVLigero;
 	private IDAOPesqueroFabrica daoPesqFabrica;
 	private IDAOPesqueroLigero  daoPesqLigero;
 	private IDAOPartida daoPartida;
-	
 	private IPoolConexiones ipool;
 	
 	
@@ -197,6 +194,20 @@ public class FachadaSQLite implements IFachada {
 	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
 		
 	}	// actPuntajeJugador
+	
+	/**
+	 * Login de un jugador.
+	 * @throws SQLException 
+	 */
+	@Override
+	public boolean loginJugador(String nom) throws SQLException {
+		IConexion icon = ipool.obtenerConexion(true);
+		boolean res = false;
+		
+		res = daoJugador.miembro(icon, nom);
+		
+		return res;
+	}	// loginJugador
 	
 	/**
 	 * Agregar un pesquero fábrica.

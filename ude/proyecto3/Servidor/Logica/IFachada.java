@@ -16,6 +16,7 @@ public interface IFachada {
 	// De jugador.
 	public String crearJugador(String nom, String cor, String pas) throws SQLException, FileNotFoundException, IOException;
 	public void actPuntajeJugador(String id, int ptosJPat) throws SQLException;
+	public boolean loginJugador(String nom) throws SQLException;
 	
 	// De vehiculos.
 	public String crearPesqueroFabrica(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException;
