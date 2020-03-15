@@ -4,6 +4,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -125,7 +133,11 @@ public class Servidor {
 			case "PAU_PART":
 				break;
 			case "LIS_PART":
-				// método para listar partidas.
+				 // create a new Gson instance
+				 Gson gson = new Gson();
+				 // convert your list to json
+				 String PartidasCreadasJSOn = gson.toJson(listarPartidaCreadas());	
+				 //return PartidasCreadasJSOn; Se debe retornar
 				break;
 			case "FIN_PART":
 				break;
@@ -157,12 +169,14 @@ public class Servidor {
 		ipool.liberarConexion(con, true);
 	}	// crearPartida
 	
-	public void listarPartida(String idPart) throws SQLException, FileNotFoundException, IOException {
+	public List<Partida> listarPartidaCreadas() throws SQLException, FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part = new Partida();
-		List<Partida> lista = partPersistencia.partidaPorId(con,part.getId());
-		partidas.put(part.getId(), part);
+		List<Partida> lista = partPersistencia.partidasCreadas(con);
+		
+		//partidas.put(part.getId(), part);
 		ipool.liberarConexion(con, true);
+		return lista;
 	}	//listarPartida
 	
 	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
