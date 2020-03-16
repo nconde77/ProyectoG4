@@ -6,112 +6,123 @@ import ude.proyecto3.Servidor.Logica.EstadoPartida;
 import ude.proyecto3.Servidor.Persistencia.DAOJugadorSQLite;
 
 public class Partida {
-
-	//private Jugador jug;
-	//, jPes;
-	private Jugador jPat, jPes;
-	private DAOJugadorSQLite daoj;
-	private String id;
-	private int ptosJPat, ptosJPes, combusJPes, combusJPat, cantPeces, Tiempo;
-	private EstadoPartida Estado;
-	//private OPV;
+	private String id, nombre, idPes1, idPes2, idPes3, idPes4;
+	private String idJPes, idJPat, idPat1, idPat2, idHeli, idLan;
+	private int combusJPes, combusJPat, cantPeces, tiempo;
+	private EstadoPartida estado;
 	
-	public Partida(String i, String nomUsu, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException {
+	/**
+	 * Constructor.
+	 * @param i
+	 * @param nom
+	 * @param idUsu
+	 * @param bando
+	 * @throws SQLException
+	 */
+	public Partida(String i, String nom, String idUsu, String bando) throws SQLException {
+		id = i;
+		nombre = nom;
+		
 		if (bando == "Pesquero" ) {
-			jPes = setJugadorPatrullero(nomUsu);
+			idJPes = idUsu;
+			idJPat = null;
 		} 
 		else {
-			jPat = setJugadorPatrullero(nomUsu);
-		}
-		//jPes = setJugadorPatrullero(nomPes);
-		ptosJPat = ptosJPes = 0;
+			idJPat = idUsu;
+			idJPes = null;
+		}	// if
 		
-		id = i;
-		
+		idPes1 = idPes2 = idPes3 = idPes4 = null;
+		idPat1 = idPat2 = idLan = idHeli = null;
 		estado = EstadoPartida.CREADA;
+		combusJPes = combusJPat = 8000;
+		cantPeces = 10000;
+		tiempo = 150;
 	}	// Partida
 	
 	
-	public Jugador setJugadorPatrullero(String j) throws SQLException {
-		if (j != null) {
-			return daoj.encontrar(null, j);
+	public void setJugadorPatrullero(String jId) throws SQLException {
+		if (jId != null) {
+			idJPat = jId;
 		}	// if
-		else return null;
 	}	// setJugadorPatrullero
 	
 	
-	public Jugador setJugadorPesqueros(String j) throws SQLException {
-		if (j != null) {
-			return daoj.encontrar(null, j);
-		}	// if
-		else return null;
-	}	// setJugadorPesquero
-	
-	public void setPtosJPat(int ptos) {
-		if (ptos != 0) {
-			ptosJPat= ptos;
-		}	// if
-	}	// setPtosJPat
-	
-	
-	public void setPtosJPes(int ptos) {
-		if (ptos != 0) {
-			ptosJPes = ptos;
+	public void setJugadorPesquero(String jId) throws SQLException {
+		if (jId != null) {
+			idJPes = jId;
 		}	// if
 	}	// setJugadorPesquero
 	
 	public void setCombusJPes(int combus) {
-		if (combus != 0) {
+		if (combus > -1) {
 			combusJPes = combus;
 		}	// if
-	}	// setCombustibleJPesquero
+	}	// setCombusJPes
 	
 	public void setCombusJPat(int combus) {
-		if (combus != 0) {
+		if (combus > -1) {
 			combusJPat = combus;
 		}	// if
-	}	// setcombustibleJugadorPatrullero
+	}	// setCombusJPat
 	
-	public void setCantidadPeses(int cantpeces) {
+	public void setCantidadPeces(int cantpeces) {
 		if (cantpeces != 0) {
 			cantPeces = cantpeces;
 		}	// if
 	}	// setCantidadPeces
 	
 	public void setTiempo(int tiempo) {
-		if (tiempo != 0) {
-			Tiempo = tiempo;
+		if (tiempo > -1) {
+			tiempo = tiempo;
 		}	// if
 	}	// setJugadorPatrullero
 	
-	public void setEstadoPartida(EstadoPartida estado) {
-		if (estado != null) {
-			Estado = estado;
-		}	// if
+	public void setEstado(EstadoPartida estado) {
+		estado = estado;
 	}	// setJugadorPatrullero
 	
 	public void iniciarPartida() {
-		Estado = EstadoPartida.INICIADA;
+		estado = EstadoPartida.INICIADA;
 	}
 	
-	public Jugador getJpat() {
-		return jPat;
-	}
+	public String getNombre() {
+		return nombre;
+	}	// getNombre
 	
-	public Jugador getJpes() {
-		return jPes;
-	}
+	public String getEstado() {
+		String est = null;
+		
+		switch (estado) {
+			case CREADA:
+				est = "CREADA";
+				break;
+			case INICIADA:
+				est = "INICIADA";
+				break;
+			case PAUSADA:
+				est = "PAUSADA";
+				break;
+			case TERMINADA:
+				est = "TERMINADA";
+				break;
+			default:
+				break;
+		}	// switch
+		
+		return est;
+	}	// getEstado
+	
+	public String getJPat() {
+		return idJPat;
+	}	// getJPat
+	
+	public String getJPes() {
+		return idJPes;
+	}	// idJPes
 	
 	public String getId() {
 		return id;
-	}
-	
-	public int getPtosJPat() {
-		return ptosJPat;
-	}
-	
-	public int getPtosJPes() {
-		return ptosJPes;
 	}
 	
 	public int getCombusJPes() {
@@ -127,7 +138,39 @@ public class Partida {
 	}
 	
 	public int getTiempo() {
-		return Tiempo;
+		return tiempo;
 	}
 	
+	public String getPes1() {
+		return idPes1;
+	}	// getPes1
+	
+	public String getPes2() {
+		return idPes2;
+	}	// getPes2
+	
+	public String getPes3() {
+		return idPes3;
+	}	// getPes3
+	
+	public String getPes4() {
+		return idPes4;
+	}	// getPes4
+	
+	public String getPat1() {
+		return idPat1;
+	}	// getPat1
+	
+	public String getPat2() {
+		return idPat2;
+	}	// getPat2
+	
+	public String getLancha() {
+		return idLan;
+	}	// getLancha
+	
+	public String getHeli() {
+		return idHeli;
+	}	// getHeli
+
 }	/* Partida */

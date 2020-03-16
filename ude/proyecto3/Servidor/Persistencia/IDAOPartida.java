@@ -13,8 +13,9 @@ public interface IDAOPartida {
 	public void guardar(IConexion icon, Partida p) throws FileNotFoundException, IOException;
 	//Pausar Partida esto va en Fachada
 	public Partida encontrar(IConexion icon, String id) throws SQLException;
+	public boolean miembro(IConexion icon, String nom) throws SQLException;
 	public void borrar(IConexion icon, String id) throws SQLException;
 	public boolean esVacio(IConexion icon) throws SQLException;
+	public Partida partidaPorId(IConexion icon, String id) throws SQLException;
 	public List<Partida> partidasCreadas(IConexion icon) throws SQLException;
-	public List<Partida> partidaPorId(IConexion icon, String id) throws SQLException;
-}
+}	/* IDAOPartida */

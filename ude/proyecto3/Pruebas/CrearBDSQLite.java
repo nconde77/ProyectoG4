@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.*;
 
+import ude.proyecto3.Servidor.Logica.EstadoPartida;
 import ude.proyecto3.Servidor.Logica.Partida;
 
 
@@ -71,6 +72,36 @@ public class CrearBDSQLite {
 					" PosY     REAL NOT NULL," +
 					" Energia  REAL NOT NULL);";
 			System.out.println("Update 3: " + sql);
+			stmt.executeUpdate(sql);
+			
+			/* Tabla de Partidas. */
+			sql = "CREATE TABLE Partidas " +
+					"(Id    VARCHAR PRIMARY KEY NOT NULL," +
+					" Nombre VARCHAR NOT NULL,"  +
+					" Estado VARCHAR NOT NULL,"  +
+					" IdJPat VARCHAR,"  +
+					" IdJPes VARCHAR,"  +
+					" IdPes1 VARCHAR,"  +
+					" IdPes2 VARCHAR,"  +
+					" IdPes3 VARCHAR,"  +
+					" IdPes4 VARCHAR,"  +
+					" IdPat1 VARCHAR,"  +
+					" IdPat2 VARCHAR,"  +
+					" IdLan  VARCHAR,"  +
+					" IdHeli VARCHAR,"  +
+					" ComJPes INTEGER NOT NULL," +
+					" ComJPat INTEGER NOT NULL," +
+					" CantPeces INTEGER NOT NULL," +
+					" Tiempo  INTEGER NOT NULL," +
+					" FOREIGN KEY (IdJPat) REFERENCES Jugadores(Id)," + 
+					" FOREIGN KEY (IdJPes) REFERENCES Jugadores(Id)," + 
+					" FOREIGN KEY (IdPes1) REFERENCES Pesqueros(Id)," + 
+					" FOREIGN KEY (IdPes2) REFERENCES Pesqueros(Id)," + 
+					" FOREIGN KEY (IdPes3) REFERENCES Pesqueros(Id)," + 
+					" FOREIGN KEY (IdPes4) REFERENCES Pesqueros(Id)," + 
+					" FOREIGN KEY (IdPat1) REFERENCES Patrulleros(Id)," + 
+					" FOREIGN KEY (IdPat2) REFERENCES Patrulleros(Id))";
+			System.out.println("Update 4: " + sql);
 			stmt.executeUpdate(sql);
 		}
 		catch (ClassNotFoundException e) {

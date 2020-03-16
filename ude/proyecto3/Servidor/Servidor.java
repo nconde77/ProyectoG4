@@ -46,9 +46,6 @@ public class Servidor {
 	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
 	private HashMap<String, Partida> partidas = new HashMap<String, Partida>(); 
 	
-	private IPoolConexiones ipool;
-	private IDAOJugador jugPersistencia;
-	private IDAOPartida partPersistencia;
 	private IFachada facha;
 	
 	static final int PE_MAX_COMB = 100;
@@ -119,8 +116,8 @@ public class Servidor {
 				}	// for
 				break;
 			case "CREAR_PART":
-				crearPartida((String) jObj.get("nombre"), (String) jObj.get("bando"),
-					0, 0, EstadoPartida.CREADA, PE_MAX_COMB, PA_MAX_COMB, MAX_TIEMPO);
+				crearPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"),
+						(String) jObj.get("bando"), sesion);
 				break;
 			case "INI_PART":
 				break;
@@ -133,10 +130,10 @@ public class Servidor {
 				break;
 			case "ALTA_USU":
 				altaUsuario((String) jObj.get("nombre"), (String) jObj.get("correo"),
-					(String) jObj.get("contrasena"));
+					(String) jObj.get("contrasena"), sesion);
 				break;
 			case "LOGIN":
-				loginUsuario((String) jObj.get("nombre"), sesion);
+				loginUsuario((String) jObj.get("nombre"), (String) jObj.get("contrasena"), sesion);
 				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
@@ -163,15 +160,20 @@ public class Servidor {
 	 * @param nom Nombre de la partida.
 	 * @param bando Bando que toma el jugador que crea la partida.
 	 */
-	public void crearPartida(String nom, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException, FileNotFoundException, IOException {
-		IConexion con = ipool.obtenerConexion(true);
-		Partida part;
-		String id = UUID.randomUUID().toString();
+	public void crearPartida(String nom, String jug, String bando, Session s)
+			throws SQLException, FileNotFoundException, IOException {
+		String id = null;
+		String resp = "{ pid: \"";
 		
-		part = new Partida(id, nom, bando, ptosJPat, ptosJPes, estado, combusJPes, combusJPat, tiempo);
-		partPersistencia.guardar(con, part);
-		partidas.put(part.getId(), part);
-		ipool.liberarConexion(con, true);
+		id = facha.crearPartida(nom, jug, bando);
+		
+		if (id != null) {
+			resp += id + "\" }";
+		}
+		else {
+			resp += "-1\" }";
+		}
+		s.getBasicRemote().sendText(resp);
 	}	// crearPartida
 	
 	/**
@@ -189,69 +191,65 @@ public class Servidor {
 	}	//listarPartida
 	
 	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
-		IConexion con = ipool.obtenerConexion(true);
-		//Partida part;
-		//Jugador jPat, jPes;
-		//part = part.
-		
-		partPersistencia.guardar(con, part);
-		ipool.liberarConexion(con, true);
 	}	// guardarPartida
 	
-	public void iniciarPartida(String id, String estado) throws SQLException {
-		IConexion con = ipool.obtenerConexion(true);
-		Partida part;
-		part = partPersistencia.encontrar(con, id);
-		part.setEstadoPartida(EstadoPartida.INICIADA);
-		ipool.liberarConexion(con, true);
+	
+	public void iniciarPartida(String id, String estado, Session s) throws SQLException {
 	}	// iniciarPartida
 	
+	/**
+	 * Pausar una partida iniciada.
+	 * @param part
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException { //String nom, String estado
-		IConexion con = ipool.obtenerConexion(true);
-		partPersistencia.guardar(con, part);
-		//De alguna manera necesito acceder a la pantalla de inicio
-		ipool.liberarConexion(con, true);
 	}	// pausarPartida
 	
-	/*
-	 * terminarPartida
+	/**
 	 * Termina la partida de identificador id y estado est. Calcula los
 	 * puntajes de la partida, y declara al ganador.
 	 * @param id  El identificador de la partida a terminar.
 	 * @param est Estado actual de la partida a terminar.
 	 */
 	public void terminarPartida(String id, String est) throws SQLException {
-		IConexion con = ipool.obtenerConexion(true);
-		Partida part;
-		Jugador jPat, jPes;
-		
-		part = partPersistencia.encontrar(con, id);
-		jPat = part.getJpat();
-		jPes = part.getJpes();
-		jPat.sumarPuntos(part.getPtosJPat()); 
-		jPes.sumarPuntos(part.getPtosJPes());
-		part.setEstadoPartida(EstadoPartida.TERMINADA);
-		partidas.remove(part.getId());
-		ipool.liberarConexion(con, true);
 	}	// terminarPartida
 	
-	private String altaUsuario(String nom, String cor, String pas) throws FileNotFoundException, SQLException, IOException {
+	/**
+	 * Dar de alta un usuario si no está registrado ya.
+	 * @param nom
+	 * @param cor
+	 * @param pas
+	 * @param s
+	 * @throws FileNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
+	private void altaUsuario(String nom, String cor, String pas, Session s) throws FileNotFoundException, SQLException, IOException {
 		String id = null;
+		String resp = "{\"registro\": ";
 		
-		logger.log(Level.INFO, "altaUsuario\n");
 		id = facha.crearJugador(nom, cor, pas);
-
-		return id;
-	}	// altaUsuario
-	
-	private void loginUsuario(String nom, Session s) throws IOException, SQLException {
-		String resp = "{\"login\": ";
 		
-		if (facha.loginJugador(nom)) {
+		if (id == null) {
 			resp += "\"true\" }";
 		}
 		else {
 			resp += "\"false\" }";
+		}	// if
+		
+		s.getBasicRemote().sendText(resp);
+	}	// altaUsuario
+	
+	private void loginUsuario(String nom, String cla, Session s) throws IOException, SQLException {
+		String resp = "{\"login\": ";
+		String uid = facha.idJugador(nom);
+		
+		if (facha.loginJugador(nom, cla)) {
+			resp += "true, \"uid\": \"" + uid + "\" }";
+		}
+		else {
+			resp += "false }";
 		}	// if
 		
 		s.getBasicRemote().sendText(resp);

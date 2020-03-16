@@ -10,7 +10,7 @@ public class Consultas {
 	* @return Devuelve el identificador de la partida guardada.
 	*/
 	public String guardarPartida() {
-		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	}	// guardarPartida
 	
 	/**
@@ -80,7 +80,7 @@ public class Consultas {
 	 */
 	public String listarPorId() {
 		return "SELECT * FROM ? ORDER BY Id";
-	}	// darUsuarioPorNombre
+	}	// listarPorId
 	
 	/**
 	 * Listar las partidas creadas y no iniciadas.
@@ -112,14 +112,14 @@ public class Consultas {
 	 * Buscar un usuario por su nombre.
 	 */
 	public String darJugadorPorNombre() {
-		return "SELECT * FROM Usuarios WHERE Nombre = UPPER(TRIM(?))";
+		return "SELECT * FROM Jugadores WHERE Nombre = ?";
 	}	// darUsuarioPorNombre
 	
 	/**
 	 * Dados los dos usuarios que jugaban, retorna su partida.
 	 */
-	public String darPartidaPorJugadores() {
-		return "SELECT * FROM Partidas WHERE Jugador1 = ? AND Jugador2 = ?";
+	public String darPartidaPorNombre() {
+		return "SELECT * FROM Partidas WHERE Nombre = ?";
 	}	// darPartidaPorUsuarios
 
 	

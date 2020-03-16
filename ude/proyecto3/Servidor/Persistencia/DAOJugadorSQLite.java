@@ -30,17 +30,13 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	public void guardar(IConexion icon, Jugador j) throws FileNotFoundException, IOException, SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite) icon;
-    	logger.log(Level.INFO, "DAO guardar\n");
 		Connection con = conSQLite.getConexion();
-    	logger.log(Level.INFO, "DAO con\n");
 		String query;
 		PreparedStatement pstmt;
-    	logger.log(Level.INFO, "DAO guardar\n");
 		
         try {
             // Insertar el jugador en la base.
         	query = consul.guardarJugador();
-        	logger.log(Level.INFO, "guardar: " + query + "\n");
         	pstmt = con.prepareStatement(query);
             pstmt.setString(1, j.getId());
             pstmt.setString(2, j.getNombre());
@@ -106,6 +102,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
     	if (rs.next()) {
+    		logger.log(Level.INFO, n + " encontrado.");
     		j = new Jugador(rs.getString("Id"),
     				rs.getString("Nombre"), 
     				rs.getString("Correo"),

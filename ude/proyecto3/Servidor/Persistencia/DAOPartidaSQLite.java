@@ -40,10 +40,22 @@ public class DAOPartidaSQLite implements IDAOPartida {
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, p.getId());
-            pstmt.setLong(4, p.getPtosJPat());
-            pstmt.setLong(5, p.getPtosJPes());
-            pstmt.setInt(6, p.getCombusJPat());
-            pstmt.setInt(7, p.getCombusJPes());
+            pstmt.setString(2, p.getNombre());
+            pstmt.setString(3, p.getEstado());
+            pstmt.setString(4, p.getJPat());
+            pstmt.setString(5, p.getJPes());
+            pstmt.setString(6, p.getPes1());
+            pstmt.setString(7, p.getPes2());
+            pstmt.setString(8, p.getPes3());
+            pstmt.setString(9, p.getPes4());
+            pstmt.setString(10, p.getPat1());
+            pstmt.setString(11, p.getPat2());
+            pstmt.setString(12, p.getLancha());
+            pstmt.setString(13, p.getHeli());
+            pstmt.setInt(14, p.getCombusJPes());
+            pstmt.setInt(15, p.getCombusJPat());
+            pstmt.setInt(16, p.getCantPeces());
+            pstmt.setInt(17, p.getTiempo());
             pstmt.executeUpdate();
             pstmt.close();
         }
@@ -52,7 +64,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
         }	// try-catch
 	}	// guardarPartida
 
-	public boolean miembro(IConexion icon, int j1, int j2) throws SQLException {
+	public boolean miembro(IConexion icon, String nom) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -66,10 +78,9 @@ public class DAOPartidaSQLite implements IDAOPartida {
         	throw new SQLException("No hay conexiones disponibles.");
         }
         
-    	query = consul.darPartidaPorJugadores();
+    	query = consul.darPartidaPorNombre();
     	pstmt = con.prepareStatement(query);
-    	pstmt.setInt(1, j1);
-    	pstmt.setInt(2, j2);
+    	pstmt.setString(1, nom);
     	rs = pstmt.executeQuery();
     	esMiembro = rs.isBeforeFirst();
     	rs.close();
@@ -197,7 +208,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		        rs = pstmt.executeQuery();
 		  	
 		  	// Si el jugador existe se crea el objeto y se lo devuelve.
-		  	if (rs.next()) {
+		  	/*if (rs.next()) {
 		  				p = new Partida(rs.getString("id"), 
 		  					rs.getString("nomUsu"),
 			  				rs.getString("bando"),
@@ -208,50 +219,19 @@ public class DAOPartidaSQLite implements IDAOPartida {
 			  				rs.getInt("combusJPat"),
 			  				rs.getInt("tiempo"));
 		  				lista.add(p);
-		  	}
+		  	}*/
 		  	rs.close();
 		  	pstmt.close();
 		return lista;		
 		
 	}// listarPartidas
 	
-	public List<Partida> partidaPorId(IConexion icon, String id) throws SQLException{
-		List<Partida> lista = null;
-		// Obtener una conexion concreta SQLite a la base.
-				ConexionSQLite conSQLite = (ConexionSQLite)icon;
-				Connection con = conSQLite.getConexion();
-				
-				PreparedStatement pstmt;
-				ResultSet rs;
-				String query;
-		        Partida p = null;
-		        
-		        if (con == null) {
-		        	throw new SQLException("No hay conexiones disponibles.");
-		        }
-		        
-		    	query = consul.partidasPorId();
-		    	pstmt = con.prepareStatement(query);
-		        pstmt.setString(1,id);
-		        rs = pstmt.executeQuery();
-		  	
-		  	// Si el jugador existe se crea el objeto y se lo devuelve.
-		  	if (rs.next()) {
-		  				p = new Partida(rs.getString("id"), 
-		  					rs.getString("nomUsu"),
-			  				rs.getString("bando"),
-			  				rs.getInt("ptosJPat"),
-			  				rs.getInt("ptosJPes"),
-			  				obtenerEstadoId(rs.getString("estadoId")),
-			  				rs.getInt("combusJPes"),
-			  				rs.getInt("combusJPat"),
-			  				rs.getInt("tiempo"));
-		  				lista.add(p);
-		  	}
-		  	rs.close();
-		  	pstmt.close();
-		return lista;		
-	}
+	public Partida partidaPorId(IConexion icon, String id) throws SQLException{
+		Partida part = null;
+		
+		return part;
+	}	// partidaPorId
+	
 
 	private EstadoPartida obtenerEstadoId(String estado) {
 		switch (estado) {

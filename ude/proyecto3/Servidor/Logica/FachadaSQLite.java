@@ -58,28 +58,16 @@ public class FachadaSQLite implements IFachada {
 		db_url = configuracion.getProperty("db_url");
 		db_factory = configuracion.getProperty("db_factory");
 		
-//		/* Para probar sin compilar el proyecto. */
-//		db_driver  = "jdbc:sqlite";
-//		db_factory = "ude.proyecto3.Servidor.Persistencia.FabricaSQLite";
-//		db_url = "/home/nconde/eclipse-workspace/servidor/base.db3";
-		
 		logger.log(Level.INFO, db_driver + ":" + cataHome + "/" + db_url);
 		ipool = PoolConexSQLite.getPoolConexiones(cataHome + "/" + db_url, "", "", 32, db_driver);
 
 		IFabrica fabJuego = (IFabrica) Class.forName(db_factory).newInstance();
-    	logger.log(Level.INFO, "Fachada IFabrica\n");
 		daoJugador = fabJuego.crearDAOJugador();
-		logger.log(Level.INFO, "Fachada DAO Jugador");
 		daoPartida = fabJuego.crearDAOPartida();
-		logger.log(Level.INFO, "Fachada DAO Partida");
 		daoOPVLigero = fabJuego.crearDAOOPVLigero();
-		logger.log(Level.INFO, "Fachada DAO OPV Lig");
 		daoOPVPesado = fabJuego.crearDAOOPVPesado();
-		logger.log(Level.INFO, "Fachada DAO OPV Pes");
 		daoPesqFabrica = fabJuego.crearDAOPesqueroFabrica();
-		logger.log(Level.INFO, "Fachada Pes Fab");
 		daoPesqLigero = fabJuego.crearDAOPesqueroLigero();
-		logger.log(Level.INFO, "Fachada Pes Lig");
 	}	// FachadaSQLite
 	
 	/* De Partida. */
@@ -90,16 +78,21 @@ public class FachadaSQLite implements IFachada {
 	 * @param bando Bando que toma el jugador que crea la partida.
 	 */
 	@Override
-	public String crearPartida(String nom, String bando, int ptosJPat, int ptosJPes, EstadoPartida estado, int combusJPes, int combusJPat, int tiempo) throws SQLException, FileNotFoundException, IOException {
-		IConexion con = ipool.obtenerConexion(true);
-		String id = UUID.randomUUID().toString();
-		Partida part = new Partida(id, nom, bando, ptosJPat, ptosJPes, estado, combusJPes, combusJPat, tiempo);
+	public String crearPartida(String nom, String usu, String bando) throws SQLException, FileNotFoundException, IOException {
+		IConexion icon = ipool.obtenerConexion(true);
+		String id = null;
+		Partida part = null;
 		
-		daoPartida.guardar(con, part);
-		ipool.liberarConexion(con, true);
+		if (!daoPartida.miembro(icon, nom)) {
+			id = UUID.randomUUID().toString();
+			part = new Partida(id, nom, usu, bando);
+			daoPartida.guardar(icon, part);			
+		}	// if
+		
+		ipool.liberarConexion(icon, true);
 		
 		return id;
-	}	// crear Partida
+	}	// crearPartida
 	
 	/**
 	 * Guarda una partida cuando se pausa o termina.
@@ -126,7 +119,7 @@ public class FachadaSQLite implements IFachada {
 		IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		part = daoPartida.encontrar(con, id);
-		part.setEstadoPartida(EstadoPartida.INICIADA);
+		part.setEstado(EstadoPartida.INICIADA);
 		ipool.liberarConexion(con, true);
 	}	// iniciarPartida
 	
@@ -147,7 +140,7 @@ public class FachadaSQLite implements IFachada {
 	 */
 	@Override
 	public void terminarPartida(String id, String est) throws SQLException {
-		IConexion con = ipool.obtenerConexion(true);
+		/*IConexion con = ipool.obtenerConexion(true);
 		Partida part;
 		Jugador jPat, jPes;
 		
@@ -156,8 +149,8 @@ public class FachadaSQLite implements IFachada {
 		jPes = part.getJpes();
 		jPat.sumarPuntos(part.getPtosJPat()); 
 		jPes.sumarPuntos(part.getPtosJPes());
-		part.setEstadoPartida(EstadoPartida.TERMINADA);
-		ipool.liberarConexion(con, true);
+		part.setEstado(EstadoPartida.TERMINADA);
+		ipool.liberarConexion(con, true);*/
 	}	// terminarPartida
 	
 	/* De jugador. */
@@ -169,16 +162,17 @@ public class FachadaSQLite implements IFachada {
 	@Override
 	public String crearJugador(String nom, String correo, String csenia) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
-		logger.log(Level.INFO, "ipool.obtenerConexion\n");
 		Jugador j;
-		logger.log(Level.INFO, "Jugador\n");
-		String id = UUID.randomUUID().toString();
+		String id = null;
 		String sal = HashConSal.getSalt(32);
 		String hCsenia = HashConSal.generateSecurePassword(csenia, sal);
 		
-		logger.log(Level.INFO, "crearJugador\n");
-		j = new Jugador(id, nom, correo, hCsenia, sal);
-		daoJugador.guardar(icon, j);
+		if (!daoJugador.miembro(icon, nom)) {
+			id = UUID.randomUUID().toString();
+			j = new Jugador(id, nom, correo, hCsenia, sal);
+			daoJugador.guardar(icon, j);
+		}	// if
+		
 		ipool.liberarConexion(icon, true);
 		
 		return id;
@@ -200,14 +194,35 @@ public class FachadaSQLite implements IFachada {
 	 * @throws SQLException 
 	 */
 	@Override
-	public boolean loginJugador(String nom) throws SQLException {
+	public boolean loginJugador(String nom, String cla) throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
+		Jugador j = null;
 		boolean res = false;
 		
-		res = daoJugador.miembro(icon, nom);
-		
+		j = daoJugador.encontrar(icon, nom);
+		if (j != null) {
+			res = j.getContrasenia().equals(HashConSal.generateSecurePassword(cla, j.getSal()));
+		}	// if
+				
 		return res;
 	}	// loginJugador
+	
+	/**
+	 * Dar el Id de un Jugador por nombre.
+	 * @throws SQLException 
+	 */
+	public String idJugador(String nom) throws SQLException {
+		IConexion icon = ipool.obtenerConexion(true);
+		Jugador j = null;
+		String id = null;
+		
+		j = daoJugador.encontrar(icon, nom);
+		if (j != null) {
+			id = j.getId();
+		}	// if
+		
+		return id;
+	}	// idJugador
 	
 	/**
 	 * Agregar un pesquero fábrica.
