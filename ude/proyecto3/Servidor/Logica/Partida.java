@@ -19,7 +19,25 @@ public class Partida {
 	 * @param bando
 	 * @throws SQLException
 	 */
+	public Partida() throws SQLException {
+		id = "-1";
+		nombre = idPes1 = idPes2 = idPes3 = idPes4 = idJPes = idJPat = idPat1 = idPat2 = idHeli = idLan = null;
+		combusJPes = combusJPat = cantPeces = tiempo = 0;
+	}	// Partida
+	
+	/**
+	 * Constructor.
+	 * @param i
+	 * @param nom
+	 * @param idUsu
+	 * @param bando
+	 * @throws SQLException
+	 */
 	public Partida(String i, String nom, String idUsu, String bando) throws SQLException {
+		inicializar(i, nom, idUsu, bando);
+	}	// Partida
+	
+	public void inicializar(String i, String nom, String idUsu, String bando) throws SQLException {
 		id = i;
 		nombre = nom;
 		
@@ -38,8 +56,7 @@ public class Partida {
 		combusJPes = combusJPat = 8000;
 		cantPeces = 10000;
 		tiempo = 150;
-	}	// Partida
-	
+	}	// inicializar
 	
 	public void setJugadorPatrullero(String jId) throws SQLException {
 		if (jId != null) {
@@ -48,11 +65,68 @@ public class Partida {
 	}	// setJugadorPatrullero
 	
 	
+	public void setPes1(String id) throws SQLException {
+		if (id != null) {
+			idPes1 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setPes2(String id) throws SQLException {
+		if (id != null) {
+			idPes2 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setPes3(String id) throws SQLException {
+		if (id != null) {
+			idPes3 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setPes4(String id) throws SQLException {
+		if (id != null) {
+			idPes4 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setPat1(String id) throws SQLException {
+		if (id != null) {
+			idPat1 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setPat2(String id) throws SQLException {
+		if (id != null) {
+			idPat2 = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setHeli(String id) throws SQLException {
+		if (id != null) {
+			idHeli = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
+	public void setLancha(String id) throws SQLException {
+		if (id != null) {
+			idLan = id;
+		}	// if
+	}	// setJugadorPesquero
+	
+	
 	public void setJugadorPesquero(String jId) throws SQLException {
 		if (jId != null) {
 			idJPes = jId;
 		}	// if
 	}	// setJugadorPesquero
+	
 	
 	public void setCombusJPes(int combus) {
 		if (combus > -1) {
@@ -60,11 +134,13 @@ public class Partida {
 		}	// if
 	}	// setCombusJPes
 	
+	
 	public void setCombusJPat(int combus) {
 		if (combus > -1) {
 			combusJPat = combus;
 		}	// if
 	}	// setCombusJPat
+	
 	
 	public void setCantidadPeces(int cantpeces) {
 		if (cantpeces != 0) {
@@ -72,23 +148,33 @@ public class Partida {
 		}	// if
 	}	// setCantidadPeces
 	
+	
 	public void setTiempo(int tiempo) {
 		if (tiempo > -1) {
 			tiempo = tiempo;
 		}	// if
 	}	// setJugadorPatrullero
 	
+	
 	public void setEstado(EstadoPartida estado) {
 		estado = estado;
 	}	// setJugadorPatrullero
+	
 	
 	public void iniciarPartida() {
 		estado = EstadoPartida.INICIADA;
 	}
 	
+	
+	public String getId() {
+		return id;
+	}
+	
+	
 	public String getNombre() {
 		return nombre;
 	}	// getNombre
+	
 	
 	public String getEstado() {
 		String est = null;
@@ -113,49 +199,56 @@ public class Partida {
 		return est;
 	}	// getEstado
 	
+	
 	public String getJPat() {
 		return idJPat;
 	}	// getJPat
+	
 	
 	public String getJPes() {
 		return idJPes;
 	}	// idJPes
 	
-	public String getId() {
-		return id;
-	}
 	
 	public int getCombusJPes() {
 		return combusJPes;
 	}
 	
+	
 	public int getCombusJPat() {
 		return combusJPat;
 	}
+	
 	
 	public int getCantPeces() {
 		return cantPeces;
 	}
 	
+	
 	public int getTiempo() {
 		return tiempo;
 	}
+	
 	
 	public String getPes1() {
 		return idPes1;
 	}	// getPes1
 	
+	
 	public String getPes2() {
 		return idPes2;
 	}	// getPes2
+	
 	
 	public String getPes3() {
 		return idPes3;
 	}	// getPes3
 	
+	
 	public String getPes4() {
 		return idPes4;
 	}	// getPes4
+	
 	
 	public String getPat1() {
 		return idPat1;
@@ -172,5 +265,17 @@ public class Partida {
 	public String getHeli() {
 		return idHeli;
 	}	// getHeli
+	
+	public String enJSON() {
+		String est, res = null;
+		
+		res = "{ \"id\": \"" + id + "\", \"nombre\": \"" + nombre + "\", \"idPes1\": \"" + idPes1 + "\", \"idPes2\": \"" + idPes2 +
+			"\", \"idPes3\": \"" + idPes3 + "\", \"idPes4\": \"" + idPes4 + "\", \"idJPes\": \"" + idJPes + "\", \"idJPat\": \"" + idJPat +
+			"\", \"idPat1\": \"" + idPat1 + "\", \"idPat2\": \"" + idPat2 + "\", \"idHeli\": \"" + idHeli + "\", \"idLan\": \"" + idLan +
+			"\", \"combusJPes\": " + combusJPes + ", \"combusJPat\": " + combusJPat + ", \"cantPeces\": " + cantPeces +
+			", \"tiempo\": " + tiempo + ", \"estado\": \"" + getEstado() + "\" }";
+		
+		return res;
+	}	// toJSON
 
 }	/* Partida */

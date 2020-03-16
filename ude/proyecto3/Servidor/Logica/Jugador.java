@@ -50,7 +50,7 @@ public class Jugador {
 		correo = c;
 	}	// getNombre
 	
-	public String toJson() {
+	public String enJSON() {
 		return "{ \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo + 
 			"\", \"contraseña\": " + contrasenia + "\", \"puntaje\": " + puntaje + ", \"id\": " + id + " }";
 	}	// toJson

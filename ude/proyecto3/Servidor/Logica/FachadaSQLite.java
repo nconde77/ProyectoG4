@@ -5,9 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +37,9 @@ import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
 	Logger logger = Logger.getLogger(FachadaSQLite.class.getName());
-
+	// El conjunto de partidas en el sistema, indizadas por nombre.
+	private HashMap<String, Partida> partidas = new HashMap<String, Partida>();
+	
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
 	private IDAOJugador daoJugador;
 	private IDAOOPVPesado daoOPVPesado;
@@ -70,7 +75,7 @@ public class FachadaSQLite implements IFachada {
 		daoPesqLigero = fabJuego.crearDAOPesqueroLigero();
 	}	// FachadaSQLite
 	
-	/* De Partida. */
+		//* De Partida. */
 	
 	/**
 	 * Crear una partida nueva a partir de datos en mensaje JSON.
@@ -90,6 +95,7 @@ public class FachadaSQLite implements IFachada {
 		}	// if
 		
 		ipool.liberarConexion(icon, true);
+		partidas.put(nom, part);
 		
 		return id;
 	}	// crearPartida
@@ -131,8 +137,7 @@ public class FachadaSQLite implements IFachada {
 		ipool.liberarConexion(con, true);
 	}	// pausarPartida
 	
-	/*
-	 * terminarPartida
+	/**
 	 * Termina la partida de identificador id y estado est. Calcula los
 	 * puntajes de la partida, y declara al ganador.
 	 * @param id  El identificador de la partida a terminar.
@@ -153,7 +158,32 @@ public class FachadaSQLite implements IFachada {
 		ipool.liberarConexion(con, true);*/
 	}	// terminarPartida
 	
-	/* De jugador. */
+	/**
+	 * Listar partidas creadas que esperan al 2do. jugador.
+	 * @throws SQLException 
+	 */
+	public String partidasCreadas() throws SQLException {
+		IConexion icon = ipool.obtenerConexion(true);
+		List<Partida> lista = new ArrayList<Partida>();
+		Iterator<Partida> itrLista = lista.iterator();
+		Partida p;
+		String strLista = "{ [ ";
+		
+		lista = daoPartida.partidasCreadas(icon);
+		
+		/* Iterar sobre las pasrtidas y pasarlas a JSON. */
+		while (itrLista.hasNext()) {
+			strLista += itrLista.next().enJSON() + ", ";
+		}	// while
+		
+		strLista = strLista.substring(0, strLista.length()-2);	// Quitar la última coma y espacio.
+		strLista += " ] };";
+		ipool.liberarConexion(icon, true);
+		
+		return strLista;
+	}	// partidasCreadas
+	
+		//* De jugador. */
 	
 	/**
 	 * @param nom Nombre del jugador.
@@ -178,8 +208,7 @@ public class FachadaSQLite implements IFachada {
 		return id;
 	}	// crearJugador
 	
-	/*
-	 * actPuntajeJugador
+	/**
 	 * Implementa la actualización del puntaje de un jugador al terminar una partida.
 	 * @param id El identificador del jugador.
 	 * @param ptosJugador El puntaje del jugador (entero).
@@ -224,6 +253,8 @@ public class FachadaSQLite implements IFachada {
 		return id;
 	}	// idJugador
 	
+		//* De Pesquero. */
+	
 	/**
 	 * Agregar un pesquero fábrica.
 	 */
@@ -253,6 +284,8 @@ public class FachadaSQLite implements IFachada {
 		
 		return id;
 	}	// crearPesqueroLigero
+	
+		//* De Patrullero. */
 	
 	/**
 	 * Agregar un patrullero ligero.

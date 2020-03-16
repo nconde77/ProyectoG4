@@ -12,6 +12,7 @@ public interface IFachada {
 	public void iniciarPartida(String id, String estado) throws SQLException;
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException;
 	public void terminarPartida(String id, String est) throws SQLException;
+	public String partidasCreadas() throws SQLException;
 	
 	// De jugador.
 	public String crearJugador(String nom, String cor, String pas) throws SQLException, FileNotFoundException, IOException;

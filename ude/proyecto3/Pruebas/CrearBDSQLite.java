@@ -23,20 +23,6 @@ public class CrearBDSQLite {
 			
 			System.out.println("Conexión a la base " + url + " establecida.");
 			
-			/* Tabla de partida */
-			sql = "CREATE TABLE Partida " +
-					"(Id           VARCHAR PRIMARY KEY NOT NULL," +
-					" NomUsu       CHARACTER(64)  NOT NULL," +
-					" Bando        CHARACTER(128) NOT NULL," +
-					" PtosJPat     INT NOT NULL," +
-					" PtosJPes     INT NOT NULL," +
-					" EstadoId     VARCHAR NOT NULL," + //ver si es necesario indicar campo como FK.
-					" CombusJPat   INT NOT NULL,"  +
-					" CombusJPes   INT NOT NULL," +
-					" Tiempo       INT   NOT NULL);";
-			System.out.println("Update 1: " + sql);
-			stmt.executeUpdate(sql);
-			
 			/* Tabla de jugadores */
 			sql = "CREATE TABLE Jugadores " +
 					"(Id      VARCHAR PRIMARY KEY NOT NULL," +

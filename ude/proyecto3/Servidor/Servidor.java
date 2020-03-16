@@ -44,7 +44,6 @@ public class Servidor {
 	Logger logger = Logger .getLogger(Servidor.class.getName());
 	
 	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
-	private HashMap<String, Partida> partidas = new HashMap<String, Partida>(); 
 	
 	private IFachada facha;
 	
@@ -115,16 +114,17 @@ public class Servidor {
 					}	// if
 				}	// for
 				break;
-			case "CREAR_PART":
+			case "CREA_PART":
 				crearPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"),
 						(String) jObj.get("bando"), sesion);
 				break;
-			case "INI_PART":
+			case "UNI_PART":
+				//unirseAPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"), sesion);
 				break;
 			case "PAU_PART":
 				break;
 			case "LIS_PART":
-				listarPartidasCreadas();
+				listarPartidasCreadas(sesion);
 				break;
 			case "FIN_PART":
 				break;
@@ -173,6 +173,8 @@ public class Servidor {
 		else {
 			resp += "-1\" }";
 		}
+		
+		logger.log(Level.INFO, "servidor: crearPartida: " + resp);
 		s.getBasicRemote().sendText(resp);
 	}	// crearPartida
 	
@@ -184,10 +186,12 @@ public class Servidor {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public String listarPartidasCreadas() throws SQLException, FileNotFoundException, IOException {
+	public void listarPartidasCreadas(Session s) throws SQLException, FileNotFoundException, IOException {
 		String lista = null;
 		
-		return lista;
+		lista = facha.partidasCreadas();
+				
+		s.getBasicRemote().sendText(lista);
 	}	//listarPartida
 	
 	public void guardarPartida(Partida part) throws FileNotFoundException, IOException {

@@ -140,12 +140,8 @@ public class Consultas {
 		return "SELECT * FROM ? WHERE Id = ?";
 	}	// encontrarPorId
 	
-	public String partidasPorId(){
-		return "SELECT * FROM Partidas WHERE Id = ?";
-	}	// encontrarPorId
-
-	public String partidasXEstado() {
-		return "SELECT * FROM Partidas WHERE EstadoId = ?";
-	}
+	public String partidasPorEstado() {
+		return "SELECT * FROM Partidas WHERE Estado = ?";
+	}	// partidasPorEstado
 
 }	/* Consultas */

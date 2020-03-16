@@ -13,20 +13,26 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ude.proyecto3.Servidor.Logica.EstadoPartida;
+import ude.proyecto3.Servidor.Logica.FachadaSQLite;
 import ude.proyecto3.Servidor.Logica.Jugador;
-import ude.proyecto3.Servidor.Persistencia.Consultas;
 import ude.proyecto3.Servidor.Logica.Partida;
-//import ude.proyecto3.Servidor;
 import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
+import ude.proyecto3.Servidor.Persistencia.Consultas;
+
 
 public class DAOPartidaSQLite implements IDAOPartida {
+	Logger logger = Logger.getLogger(DAOPartidaSQLite.class.getName());
 	private Consultas consul;
+	
 	
 	public DAOPartidaSQLite() {
 		consul = new Consultas();
 	}	// DAOPartidaSQLite
+	
 	
 	public void guardar(IConexion icon, Partida p) throws FileNotFoundException, IOException {
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
@@ -36,6 +42,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		Jugador j;
 		
         try {
+        	logger.log(Level.INFO, "DAOPartida: guardar: " + p.getNombre());
         	con = conSQLite.getConexion(); 
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
@@ -63,7 +70,8 @@ public class DAOPartidaSQLite implements IDAOPartida {
             System.out.println("Error al guardar una partida.\n" + e.getMessage());
         }	// try-catch
 	}	// guardarPartida
-
+	
+	
 	public boolean miembro(IConexion icon, String nom) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
@@ -89,7 +97,9 @@ public class DAOPartidaSQLite implements IDAOPartida {
         return esMiembro;
 	}	// miembro
 	
-	// encontrar por nombre o correo-e.
+	/**
+	 *  Encontrar por nombre o correo-e.
+	 */
 	@Override
 	public Partida encontrar(IConexion icon, String id) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
@@ -127,7 +137,8 @@ public class DAOPartidaSQLite implements IDAOPartida {
     return p;
 }	// encontrar
 	
-	/*
+	
+	/**
 	 * Eliminar un jugador por nombre.
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
@@ -152,7 +163,8 @@ public class DAOPartidaSQLite implements IDAOPartida {
       }	// try-catch
 	}	// borrar
 	
-	/*
+	
+	/**
 	 * Retorna true si no hay jugadores guardados en la tabla.
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#esVacio(ude.proyecto3.Servidor.Persistencia.IConexion)
 	 */
@@ -188,43 +200,76 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	 * @throws SQLException 
 	 */
 	public List<Partida> partidasCreadas(IConexion icon) throws SQLException {
-		List<Partida> lista = null;
 		// Obtener una conexion concreta SQLite a la base.
-				ConexionSQLite conSQLite = (ConexionSQLite)icon;
-				Connection con = conSQLite.getConexion();
-				
-				PreparedStatement pstmt;
-				ResultSet rs;
-				String query;
-		        Partida p = null;
-		        
-		        if (con == null) {
-		        	throw new SQLException("No hay conexiones disponibles.");
-		        }
-		        
-		    	query = consul.partidasXEstado();
-		    	pstmt = con.prepareStatement(query);
-		        pstmt.setString(1,"CREADA");
-		        rs = pstmt.executeQuery();
-		  	
-		  	// Si el jugador existe se crea el objeto y se lo devuelve.
-		  	/*if (rs.next()) {
-		  				p = new Partida(rs.getString("id"), 
-		  					rs.getString("nomUsu"),
-			  				rs.getString("bando"),
-			  				rs.getInt("ptosJPat"),
-			  				rs.getInt("ptosJPes"),
-			  				obtenerEstadoId(rs.getString("estadoId")),
-			  				rs.getInt("combusJPes"),
-			  				rs.getInt("combusJPat"),
-			  				rs.getInt("tiempo"));
-		  				lista.add(p);
-		  	}*/
-		  	rs.close();
-		  	pstmt.close();
-		return lista;		
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
+		PreparedStatement pstmt;
+		ResultSet rs = null;
+		String query, bando, idUsu;
+		EstadoPartida est;
+		List<Partida> lista = new ArrayList<Partida>();
+		Partida part = new Partida();
 		
-	}// listarPartidas
+		if (con == null) {
+			throw new SQLException("No hay conexiones disponibles.");
+        }	// if
+        
+    	query = consul.partidasPorEstado();
+    	pstmt = con.prepareStatement(query);
+        pstmt.setString(1, "CREADA");
+        rs = pstmt.executeQuery();
+	  	
+        // Cargar la lista desde el result set.
+        while (rs.next()) {
+        	if (rs.getString("idJPat").equals(null)) {
+        		bando = "Pesquero";
+        		idUsu = rs.getString("idJPes");
+        	}
+        	else {
+        		bando = "Patrullero";
+        		idUsu = rs.getString("idJPat");
+        	}	// if
+        	
+        	switch (rs.getString("Estado")) {
+    			case "CREADA":
+    				est = EstadoPartida.CREADA;
+    				break;
+        		case "INICIADA":
+        			est = EstadoPartida.INICIADA;
+        			break;
+        		case "PAUSADA":
+        			est = EstadoPartida.PAUSADA;
+        			break;
+        		case "TERMINADA":
+    				est = EstadoPartida.TERMINADA;
+    				break;
+        		default:
+        			est = null;
+        			break;
+        	}	// switch
+        	
+        	part.inicializar(rs.getString("Id") , rs.getString("Nombre"),  idUsu, bando);
+        	part.setPat1(rs.getString("idPat1"));
+        	part.setPat2(rs.getString("idPat2"));
+        	part.setLancha(rs.getString("idLan"));
+        	part.setHeli(rs.getString("idHeli"));
+        	part.setPes1(rs.getString("idPes1"));
+        	part.setPes2(rs.getString("idPes2"));
+        	part.setPes3(rs.getString("idPes3"));
+        	part.setPes4(rs.getString("idPes4"));
+        	part.setEstado(est);
+        	part.setCantidadPeces(rs.getInt("CantPeces"));
+        	part.setCombusJPat(rs.getInt("ComJPat"));
+        	part.setCombusJPes(rs.getInt("ComJPes"));
+        	part.setTiempo(rs.getInt("CantTiempo"));
+        	lista.add(part);
+        }	// while
+        
+	  	rs.close();
+	  	pstmt.close();
+		return lista;
+	}	// partidasCreadas
+	
 	
 	public Partida partidaPorId(IConexion icon, String id) throws SQLException{
 		Partida part = null;
@@ -245,7 +290,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	            return EstadoPartida.TERMINADA;
 	        default: 
 	        	return null;	       
-		}
-	}
+		}	// switch
+	}	// obtenerEstadoId
 
 }	/* DAOPartida */
