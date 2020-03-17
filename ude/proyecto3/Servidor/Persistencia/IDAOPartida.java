@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import ude.proyecto3.Servidor.Logica.Partida;
+import ude.proyecto3.Servidor.Logica.PartidaCreada;
 import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 
 public interface IDAOPartida {
@@ -17,5 +18,5 @@ public interface IDAOPartida {
 	public void borrar(IConexion icon, String id) throws SQLException;
 	public boolean esVacio(IConexion icon) throws SQLException;
 	public Partida partidaPorId(IConexion icon, String id) throws SQLException;
-	public List<Partida> partidasCreadas(IConexion icon) throws SQLException;
+	public List<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException;
 }	/* IDAOPartida */

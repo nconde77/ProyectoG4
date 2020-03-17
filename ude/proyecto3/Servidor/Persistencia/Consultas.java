@@ -129,7 +129,7 @@ public class Consultas {
 	 * Eliminar un jugador.
 	 */
 	public String eliminarJugador() {
-		return "DELETE FROM Jugadores WHERE Nombre = UPPER(TRIM(?))";
+		return "DELETE FROM Jugadores WHERE Nombre = ?";
 	}	// darUsuarioPorNombre
 	
 	public String eliminarPorId() {

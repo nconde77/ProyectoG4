@@ -38,8 +38,10 @@ public class PoolConexSQLite implements IPoolConexiones {
 	 */
 	private PoolConexSQLite(String url, String usr, String pswd, int tam, String dvr) {
 		dbURL = url;
+		///dbURL = "/usr/share/tomcat/webapps/servidor/base.db3";
 		user = usr;
 		password = pswd;
+		///dbDriver = "";
 		dbDriver = dvr;
 		this.tope = -1;
 		this.tamanio = tam;

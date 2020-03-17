@@ -19,9 +19,9 @@ import java.util.logging.Logger;
 
 import javax.websocket.Session;
 
-import ude.proyecto3.Servidor.Logica.Partida;
-import ude.proyecto3.Servidor.Servidor;
 import ude.proyecto3.Servidor.Logica.HashConSal;
+import ude.proyecto3.Servidor.Logica.Partida;
+import ude.proyecto3.Servidor.Logica.PartidaCreada;
 import ude.proyecto3.Servidor.Persistencia.IConexion;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 import ude.proyecto3.Servidor.Persistencia.IDAOPartida;
@@ -59,13 +59,13 @@ public class FachadaSQLite implements IFachada {
 		// Parametros configurados por nos.
 		Properties configuracion = new Properties();
 		configuracion.load (new FileInputStream (cataHome + "/webapps/servidor/WEB-INF/classes/servidor.config"));
+		///configuracion.load (new FileInputStream ("/usr/share/tomcat/webapps/servidor/WEB-INF/classes/servidor.config"));
 		db_driver = configuracion.getProperty("db_driver");
 		db_url = configuracion.getProperty("db_url");
+		///db_url = "/usr/share/tomcat/webapps/servidor/base.db3";
 		db_factory = configuracion.getProperty("db_factory");
 		
-		logger.log(Level.INFO, db_driver + ":" + cataHome + "/" + db_url);
 		ipool = PoolConexSQLite.getPoolConexiones(cataHome + "/" + db_url, "", "", 32, db_driver);
-
 		IFabrica fabJuego = (IFabrica) Class.forName(db_factory).newInstance();
 		daoJugador = fabJuego.crearDAOJugador();
 		daoPartida = fabJuego.crearDAOPartida();
@@ -164,22 +164,40 @@ public class FachadaSQLite implements IFachada {
 	 */
 	public String partidasCreadas() throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
-		List<Partida> lista = new ArrayList<Partida>();
-		Iterator<Partida> itrLista = lista.iterator();
+		List<PartidaCreada> lista;
+		Iterator<PartidaCreada> itrLista;
+		PartidaCreada part;
 		Partida p;
-		String strLista = "{ [ ";
+		String id, jNom, strLista = "{ [ ";
+		int largo;
 		
+		logger.log(Level.INFO, "facha: partidasCreadas: llamando daoPartida.partidasCreadas()...");
 		lista = daoPartida.partidasCreadas(icon);
+		itrLista = lista.iterator();
+		logger.log(Level.INFO, "facha: partidasCreadas: recibo para iterar\n" + lista.toString());
 		
 		/* Iterar sobre las pasrtidas y pasarlas a JSON. */
 		while (itrLista.hasNext()) {
-			strLista += itrLista.next().enJSON() + ", ";
+			part = itrLista.next();
+			logger.log(Level.INFO, "facha: partidasCreadas: en el while");
+			id = part.getJugador();
+			jNom = daoJugador.encontrar(icon, id).getNombre();
+			part.setJugador(jNom);
+			System.err.println(part.enJSON());
+			logger.log(Level.INFO, part.enJSON());
+			strLista += part.enJSON() + ", ";
 		}	// while
 		
-		strLista = strLista.substring(0, strLista.length()-2);	// Quitar la última coma y espacio.
+		// Quitar la última coma de la cadena si hay partidas.
+		largo = strLista.length();
+		if (largo > 4) {
+			strLista = strLista.substring(0, largo - 2);
+		}	// if
+		
 		strLista += " ] };";
 		ipool.liberarConexion(icon, true);
 		
+		logger.log(Level.INFO, "facha: partidasCreadas: respuesta \n" + strLista);
 		return strLista;
 	}	// partidasCreadas
 	

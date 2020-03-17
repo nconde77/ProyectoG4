@@ -92,7 +92,6 @@ public class Servidor {
 		JSONObject jObj;
 		
 		logger.log(Level.INFO, "Mensaje " + mensaje + " de " + sesion.getId() + ".\n");
-		
 		/* Se cambió de clase para parsear a json-simple en vez de Gson
 		 * porque si no revienta como chinche.
 		 */
@@ -189,8 +188,10 @@ public class Servidor {
 	public void listarPartidasCreadas(Session s) throws SQLException, FileNotFoundException, IOException {
 		String lista = null;
 		
+		logger.log(Level.INFO, "servidor: listarPartidas: llamando facha.partidasCreadas()...");
 		lista = facha.partidasCreadas();
-				
+		logger.log(Level.INFO, "servidor: listarPartidas: resultado\n" + lista);
+		
 		s.getBasicRemote().sendText(lista);
 	}	//listarPartida
 	

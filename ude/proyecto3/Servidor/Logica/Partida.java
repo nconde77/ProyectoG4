@@ -37,6 +37,7 @@ public class Partida {
 		inicializar(i, nom, idUsu, bando);
 	}	// Partida
 	
+	
 	public void inicializar(String i, String nom, String idUsu, String bando) throws SQLException {
 		id = i;
 		nombre = nom;

@@ -20,6 +20,7 @@ import ude.proyecto3.Servidor.Logica.EstadoPartida;
 import ude.proyecto3.Servidor.Logica.FachadaSQLite;
 import ude.proyecto3.Servidor.Logica.Jugador;
 import ude.proyecto3.Servidor.Logica.Partida;
+import ude.proyecto3.Servidor.Logica.PartidaCreada;
 import ude.proyecto3.Servidor.Logica.PesqueroFabrica;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
 
@@ -96,6 +97,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
         
         return esMiembro;
 	}	// miembro
+	
 	
 	/**
 	 *  Encontrar por nombre o correo-e.
@@ -199,7 +201,61 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	 * lista las partidas creadas que esperan por otro jugador para arrancar.
 	 * @throws SQLException 
 	 */
-	public List<Partida> partidasCreadas(IConexion icon) throws SQLException {
+	@Override
+	public List<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException {
+		// Obtener una conexion concreta SQLite a la base.
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
+		PreparedStatement pstmt;
+		ResultSet rs = null;
+		String query, bando, idUsu;
+		List<PartidaCreada> lista = new ArrayList<PartidaCreada>();
+		PartidaCreada part = new PartidaCreada();
+		
+		if (con == null) {
+			throw new SQLException("No hay conexiones disponibles.");
+        }	// if
+        
+    	query = consul.partidasPorEstado();
+    	pstmt = con.prepareStatement(query);
+        pstmt.setString(1, "CREADA");
+        rs = pstmt.executeQuery();
+	  	
+        // Cargar la lista desde el result set.
+        while (rs.next()) {
+        	idUsu = rs.getString("IdJPat");
+        	
+        	if (idUsu == null) {
+        		bando = "Pesquero";
+        		idUsu = rs.getString("IdJPes");
+        	}
+        	else {
+        		bando = "Patrullero";
+        		idUsu = rs.getString("IdJPat");
+        	}	// if
+        	
+        	part.setId(rs.getString("Id"));
+        	part.setNombre(rs.getString("Nombre"));
+        	part.setJugador(idUsu);
+        	part.setBando(bando);
+        	logger.log(Level.INFO, part.enJSON());
+        	lista.add(part);
+        	logger.log(Level.INFO, lista.toString());
+        }	// while
+        
+	  	rs.close();
+	  	pstmt.close();
+	  	logger.log(Level.INFO, "dao partidas: Fin.");
+	  	
+		return lista;
+	}	// partidasCreadas
+		
+		
+	/**
+	 * Lista las partidas.
+	 * @throws SQLException 
+	 */
+	public List<Partida> partidas(IConexion icon) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -210,6 +266,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		List<Partida> lista = new ArrayList<Partida>();
 		Partida part = new Partida();
 		
+		logger.log(Level.INFO, "dao partidas: partidasCreadas: calculando...");
 		if (con == null) {
 			throw new SQLException("No hay conexiones disponibles.");
         }	// if
@@ -267,8 +324,10 @@ public class DAOPartidaSQLite implements IDAOPartida {
         
 	  	rs.close();
 	  	pstmt.close();
+	  	logger.log(Level.INFO, "dao partidas: Fin.");
+	  	
 		return lista;
-	}	// partidasCreadas
+	}	// partidas
 	
 	
 	public Partida partidaPorId(IConexion icon, String id) throws SQLException{
