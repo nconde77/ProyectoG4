@@ -43,8 +43,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		Jugador j;
 		
         try {
-        	logger.log(Level.INFO, "DAOPartida: guardar: " + p.getNombre());
-        	con = conSQLite.getConexion(); 
+        	con = conSQLite.getConexion();
             query = consul.guardarPartida();
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, p.getId());
@@ -202,14 +201,14 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	 * @throws SQLException 
 	 */
 	@Override
-	public List<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException {
+	public ArrayList<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
 		PreparedStatement pstmt;
 		ResultSet rs = null;
 		String query, bando, idUsu;
-		List<PartidaCreada> lista = new ArrayList<PartidaCreada>();
+		ArrayList<PartidaCreada> lista = new ArrayList<PartidaCreada>();
 		PartidaCreada part = new PartidaCreada();
 		
 		if (con == null) {
@@ -238,14 +237,11 @@ public class DAOPartidaSQLite implements IDAOPartida {
         	part.setNombre(rs.getString("Nombre"));
         	part.setJugador(idUsu);
         	part.setBando(bando);
-        	logger.log(Level.INFO, part.enJSON());
         	lista.add(part);
-        	logger.log(Level.INFO, lista.toString());
         }	// while
         
 	  	rs.close();
 	  	pstmt.close();
-	  	logger.log(Level.INFO, "dao partidas: Fin.");
 	  	
 		return lista;
 	}	// partidasCreadas
@@ -266,7 +262,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		List<Partida> lista = new ArrayList<Partida>();
 		Partida part = new Partida();
 		
-		logger.log(Level.INFO, "dao partidas: partidasCreadas: calculando...");
 		if (con == null) {
 			throw new SQLException("No hay conexiones disponibles.");
         }	// if
@@ -324,7 +319,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
         
 	  	rs.close();
 	  	pstmt.close();
-	  	logger.log(Level.INFO, "dao partidas: Fin.");
 	  	
 		return lista;
 	}	// partidas

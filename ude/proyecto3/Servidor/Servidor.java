@@ -99,12 +99,10 @@ public class Servidor {
 		
 		switch ((String) jObj.get("tipo")) {
 			case "CAPTURAP1": case "CAPTURAP2": case "CAPTURAP3": case "CAPTURAP4":
-			case "COMBUSTIBLE":
-			case "DISPARO":
-			case "MOVIMIENTO":
-			case "PAUSA":
-			case "PECES":
-			case "REANUDAR":
+			case "COMBUSTIBLE": case "DISPARO":
+			case "MOVIMIENTO": case "PAUSA":
+			case "PECES": case "AVISOS":
+			case "REANUDAR": case "TORMENTA":
 			case "TIEMPO":
 				for (Session s : sesiones) {
 					if (!s.equals(sesion)) {
@@ -118,7 +116,7 @@ public class Servidor {
 						(String) jObj.get("bando"), sesion);
 				break;
 			case "UNI_PART":
-				//unirseAPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"), sesion);
+				unirseAPartida((String) jObj.get("pid"), (String) jObj.get("uid"), sesion);
 				break;
 			case "PAU_PART":
 				break;
@@ -173,9 +171,20 @@ public class Servidor {
 			resp += "-1\" }";
 		}
 		
-		logger.log(Level.INFO, "servidor: crearPartida: " + resp);
 		s.getBasicRemote().sendText(resp);
 	}	// crearPartida
+	
+	/**
+	 * Unir el usuario uid a una partida creada (pid) en el bando que falta.
+	 * @throws SQLException 
+	 * @throws IOException 
+	 */
+	public void unirseAPartida(String pid, String uid, Session s) throws SQLException, IOException {
+		String mensaje = null;
+		
+		facha.unirseAPartida(pid, uid);
+		s.getBasicRemote().sendText(mensaje);
+	}	// unirseAPartida
 	
 	/**
 	 * Devuelve una cadena con un array JSON conteniendo las partidas creadas a las
@@ -188,9 +197,7 @@ public class Servidor {
 	public void listarPartidasCreadas(Session s) throws SQLException, FileNotFoundException, IOException {
 		String lista = null;
 		
-		logger.log(Level.INFO, "servidor: listarPartidas: llamando facha.partidasCreadas()...");
 		lista = facha.partidasCreadas();
-		logger.log(Level.INFO, "servidor: listarPartidas: resultado\n" + lista);
 		
 		s.getBasicRemote().sendText(lista);
 	}	//listarPartida
@@ -237,10 +244,10 @@ public class Servidor {
 		id = facha.crearJugador(nom, cor, pas);
 		
 		if (id == null) {
-			resp += "\"true\" }";
+			resp += "\"false\" }";
 		}
 		else {
-			resp += "\"false\" }";
+			resp += "\"true\" }";
 		}	// if
 		
 		s.getBasicRemote().sendText(resp);

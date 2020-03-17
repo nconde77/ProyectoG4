@@ -79,9 +79,11 @@ public class DAOJugadorSQLite implements IDAOJugador {
         return esMiembro;
 	}	// miembro
 	
-	// encontrar por nombre o correo-e.
+	/**
+	 * Encontrar por nombre.
+	 */
 	@Override
-	public Jugador encontrar(IConexion icon, String n) throws SQLException {
+	public Jugador encontrarNombre(IConexion icon, String n) throws SQLException {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
@@ -102,7 +104,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
     	
     	// Si el jugador existe se crea el objeto y se lo devuelve.
     	if (rs.next()) {
-    		logger.log(Level.INFO, n + " encontrado.");
     		j = new Jugador(rs.getString("Id"),
     				rs.getString("Nombre"), 
     				rs.getString("Correo"),
@@ -115,6 +116,48 @@ public class DAOJugadorSQLite implements IDAOJugador {
         
         return j;
 	}	// encontrar
+	
+	
+	/**
+	 * Encontrar por Id.
+	 */
+	@Override
+	public Jugador encontrarId(IConexion icon, String i) throws SQLException {
+		// Obtener una conexion concreta SQLite a la base.
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
+		
+		PreparedStatement pstmt;
+		ResultSet rs;
+		String query;
+        Jugador j = null;
+        
+        if (con == null) {
+        	throw new SQLException("No hay conexiones disponibles.");
+        }
+        
+    	query = consul.darJugadorPorId();
+    	logger.log(Level.INFO, "encontrarId: " + query + ", " + i);
+    	pstmt = con.prepareStatement(query);
+    	pstmt.setString(1, i);
+    	rs = pstmt.executeQuery();
+    	
+    	// Si el jugador existe se crea el objeto y se lo devuelve.
+    	if (rs.next()) {
+    		logger.log(Level.INFO, i + " encontrado.");
+    		j = new Jugador(rs.getString("Id"),
+    				rs.getString("Nombre"), 
+    				rs.getString("Correo"),
+    				rs.getString("Contrasenia"),
+    				rs.getString("Sal"));
+    		j.sumarPuntos(rs.getLong("Puntaje"));
+    		logger.log(Level.INFO, "daoJugador: encontrarId: " + j.enJSON());
+    	}
+    	rs.close();
+    	pstmt.close();
+        
+        return j;
+	}	// encontrarId
 	
 	/*
 	 * Eliminar un jugador por nombre.

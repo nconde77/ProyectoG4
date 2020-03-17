@@ -91,7 +91,8 @@ public class FachadaSQLite implements IFachada {
 		if (!daoPartida.miembro(icon, nom)) {
 			id = UUID.randomUUID().toString();
 			part = new Partida(id, nom, usu, bando);
-			daoPartida.guardar(icon, part);			
+			daoPartida.guardar(icon, part);
+			partidas.put(id, part);
 		}	// if
 		
 		ipool.liberarConexion(icon, true);
@@ -107,13 +108,33 @@ public class FachadaSQLite implements IFachada {
 	@Override
 	 public void guardarPartida(Partida part) throws FileNotFoundException, IOException {
 		IConexion con = ipool.obtenerConexion(true);
-		//Partida part;
-		//Jugador jPat, jPes;
-		//part = part.
 		
 		daoPartida.guardar(con, part);
 		ipool.liberarConexion(con, true);
 	}	// guardarPartida
+	
+	/**
+	 * Unirse a partida creada.
+	 * @throws SQLException 
+	 */
+	@Override
+	public void unirseAPartida(String pid, String uid) throws SQLException {
+		IConexion con = ipool.obtenerConexion(true);
+		Partida part;
+		
+		part = partidas.get(pid);
+		if (part.getJPat() == null) {
+			part.setJugadorPatrullero(uid);
+		}
+		else {
+			part.setJugadorPesquero(uid);
+		}	// if
+		
+		part = daoPartida.encontrar(con, pid);
+		part.setEstado(EstadoPartida.INICIADA);
+		
+		ipool.liberarConexion(con, true);
+	}	// unirseAPartida
 	
 	/**
 	 * Iniciar una partida creada cuando se une el segundo jugador o cuando se saca de pausa.
@@ -164,27 +185,22 @@ public class FachadaSQLite implements IFachada {
 	 */
 	public String partidasCreadas() throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
-		List<PartidaCreada> lista;
+		ArrayList<PartidaCreada> lista;
 		Iterator<PartidaCreada> itrLista;
 		PartidaCreada part;
 		Partida p;
-		String id, jNom, strLista = "{ [ ";
+		String id, jNom, strLista = "{ \"partCreadas\": [ ";
 		int largo;
 		
-		logger.log(Level.INFO, "facha: partidasCreadas: llamando daoPartida.partidasCreadas()...");
 		lista = daoPartida.partidasCreadas(icon);
 		itrLista = lista.iterator();
-		logger.log(Level.INFO, "facha: partidasCreadas: recibo para iterar\n" + lista.toString());
 		
-		/* Iterar sobre las pasrtidas y pasarlas a JSON. */
+		/* Iterar sobre las partidas y pasarlas a JSON. */
 		while (itrLista.hasNext()) {
 			part = itrLista.next();
-			logger.log(Level.INFO, "facha: partidasCreadas: en el while");
 			id = part.getJugador();
-			jNom = daoJugador.encontrar(icon, id).getNombre();
+			jNom = daoJugador.encontrarId(icon, id).getNombre();
 			part.setJugador(jNom);
-			System.err.println(part.enJSON());
-			logger.log(Level.INFO, part.enJSON());
 			strLista += part.enJSON() + ", ";
 		}	// while
 		
@@ -194,10 +210,11 @@ public class FachadaSQLite implements IFachada {
 			strLista = strLista.substring(0, largo - 2);
 		}	// if
 		
-		strLista += " ] };";
+		strLista += " ] }";
 		ipool.liberarConexion(icon, true);
 		
 		logger.log(Level.INFO, "facha: partidasCreadas: respuesta \n" + strLista);
+		
 		return strLista;
 	}	// partidasCreadas
 	
@@ -246,7 +263,7 @@ public class FachadaSQLite implements IFachada {
 		Jugador j = null;
 		boolean res = false;
 		
-		j = daoJugador.encontrar(icon, nom);
+		j = daoJugador.encontrarNombre(icon, nom);
 		if (j != null) {
 			res = j.getContrasenia().equals(HashConSal.generateSecurePassword(cla, j.getSal()));
 		}	// if
@@ -263,7 +280,7 @@ public class FachadaSQLite implements IFachada {
 		Jugador j = null;
 		String id = null;
 		
-		j = daoJugador.encontrar(icon, nom);
+		j = daoJugador.encontrarNombre(icon, nom);
 		if (j != null) {
 			id = j.getId();
 		}	// if

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import ude.proyecto3.Servidor.Logica.Partida;
@@ -18,5 +19,5 @@ public interface IDAOPartida {
 	public void borrar(IConexion icon, String id) throws SQLException;
 	public boolean esVacio(IConexion icon) throws SQLException;
 	public Partida partidaPorId(IConexion icon, String id) throws SQLException;
-	public List<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException;
+	public ArrayList<PartidaCreada> partidasCreadas(IConexion icon) throws SQLException;
 }	/* IDAOPartida */

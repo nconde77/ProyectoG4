@@ -42,13 +42,13 @@ public class Partida {
 		id = i;
 		nombre = nom;
 		
-		if (bando == "Pesquero" ) {
-			idJPes = idUsu;
-			idJPat = null;
-		} 
-		else {
+		if (bando.equals("OPV")) {
 			idJPat = idUsu;
 			idJPes = null;
+		} 
+		else {
+			idJPes = idUsu;
+			idJPat = null;
 		}	// if
 		
 		idPes1 = idPes2 = idPes3 = idPes4 = null;

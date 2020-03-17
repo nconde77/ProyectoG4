@@ -10,6 +10,7 @@ public interface IFachada {
 	public String crearPartida(String nom, String jug, String bando) throws SQLException, FileNotFoundException, IOException;
 	public void guardarPartida(Partida part) throws FileNotFoundException, IOException;
 	public void iniciarPartida(String id, String estado) throws SQLException;
+	public void unirseAPartida(String pid, String uid) throws SQLException;
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException;
 	public void terminarPartida(String id, String est) throws SQLException;
 	public String partidasCreadas() throws SQLException;

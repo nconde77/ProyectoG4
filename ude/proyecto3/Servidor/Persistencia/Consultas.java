@@ -114,6 +114,10 @@ public class Consultas {
 	public String darJugadorPorNombre() {
 		return "SELECT * FROM Jugadores WHERE Nombre = ?";
 	}	// darUsuarioPorNombre
+
+	public String darJugadorPorId() {
+		return "SELECT * FROM Jugadores WHERE Id = ?";
+	}	// darUsuarioPorNombre
 	
 	/**
 	 * Dados los dos usuarios que jugaban, retorna su partida.
@@ -121,6 +125,14 @@ public class Consultas {
 	public String darPartidaPorNombre() {
 		return "SELECT * FROM Partidas WHERE Nombre = ?";
 	}	// darPartidaPorUsuarios
+	
+	public String encontrarPorId() {
+		return "SELECT * FROM ? WHERE Id = ?";
+	}	// encontrarPorId
+	
+	public String partidasPorEstado() {
+		return "SELECT * FROM Partidas WHERE Estado = ?";
+	}	// partidasPorEstado
 
 	
 			/** Eliminar elementos **/
@@ -133,15 +145,7 @@ public class Consultas {
 	}	// darUsuarioPorNombre
 	
 	public String eliminarPorId() {
-		return "DELETE FROM ? WHERE Id = TRIM(?)";
+		return "DELETE FROM ? WHERE Id = ?";
 	}	// eliminarPorId
-	
-	public String encontrarPorId() {
-		return "SELECT * FROM ? WHERE Id = ?";
-	}	// encontrarPorId
-	
-	public String partidasPorEstado() {
-		return "SELECT * FROM Partidas WHERE Estado = ?";
-	}	// partidasPorEstado
 
 }	/* Consultas */
