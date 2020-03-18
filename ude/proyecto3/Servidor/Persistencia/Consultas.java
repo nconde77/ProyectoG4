@@ -71,7 +71,7 @@ public class Consultas {
 	/**
 	 * Listar los top ? jugadores.
 	 */
-	public String topJugadores() {
+	public String topNJugadores() {
 		return "SELECT Nombre, Puntaje FROM Jugadores ORDER BY Puntaje LIMIT ?";
 	}	// darUsuarioPorNombre
 	
@@ -127,7 +127,15 @@ public class Consultas {
 	}	// darPartidaPorUsuarios
 	
 	public String encontrarPorId() {
-		return "SELECT * FROM ? WHERE Id = ?";
+//		No se puede pasar el nombre de la table como parámetro a un Prep. Statement.
+		// return "SELECT * FROM ? WHERE Id = ?";
+		return null;
+	}	// encontrarPorId
+	
+	public String eliminarPorId() {
+//		No se puede pasar el nombre de la table como parámetro a un Prep. Statement.
+		// return "DELETE FROM ? WHERE Id = ?";
+		return null;
 	}	// encontrarPorId
 	
 	public String partidasPorEstado() {
@@ -143,9 +151,5 @@ public class Consultas {
 	public String eliminarJugador() {
 		return "DELETE FROM Jugadores WHERE Nombre = ?";
 	}	// darUsuarioPorNombre
-	
-	public String eliminarPorId() {
-		return "DELETE FROM ? WHERE Id = ?";
-	}	// eliminarPorId
 
 }	/* Consultas */

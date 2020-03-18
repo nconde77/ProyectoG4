@@ -5,14 +5,27 @@ public class Jugador {
 	private String id, nombre, correo, contrasenia, sal;
 	int puntaje;
 	
-	public Jugador(String i, String n, String c, String p, String s) {
-		id = i;
-		nombre = n;
-		correo = c;
-		contrasenia = p;
-		sal = s;
-		puntaje = 0;
+	public Jugador() {
+		id = "-1";
 	}	// Jugador
+
+	public Jugador(String i, String n, String c, String pa, String s, int pu) {
+		inicializar(i, n, c, pa, s, pu);
+	}	// Jugador
+	
+	public void inicializar(String i, String n, String c, String pa, String s, int pu) {
+		if (i.equals(null)) {
+			id = "-1";
+		}
+		else {
+			id = i;
+			nombre = n;
+			correo = c;
+			contrasenia = pa;
+			sal = s;
+			puntaje = pu;
+		}	// id
+	}	// inicializar
 	
 	public String getId() {
 		return id;
@@ -34,7 +47,7 @@ public class Jugador {
 		return sal;
 	}	// getNombre
 	
-	public long getPuntaje() {
+	public int getPuntaje() {
 		return puntaje;
 	}	// getPuntaje
 	
@@ -51,8 +64,8 @@ public class Jugador {
 	}	// getNombre
 	
 	public String enJSON() {
-		return "{ \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo + 
-			"\", \"contraseña\": " + contrasenia + "\", \"puntaje\": " + puntaje + ", \"id\": " + id + " }";
+		return "{ \"id\": \"" + id + "\", \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo + "\", \"contraseña\": " +
+				contrasenia + "\", \"sal\": \"" + sal + "\", \"puntaje\": " + puntaje + " }";
 	}	// toJson
 	
 }	/* Jugador */

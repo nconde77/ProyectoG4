@@ -234,7 +234,7 @@ public class FachadaSQLite implements IFachada {
 		
 		if (!daoJugador.miembro(icon, nom)) {
 			id = UUID.randomUUID().toString();
-			j = new Jugador(id, nom, correo, hCsenia, sal);
+			j = new Jugador(id, nom, correo, hCsenia, sal, 0);
 			daoJugador.guardar(icon, j);
 		}	// if
 		
@@ -287,6 +287,46 @@ public class FachadaSQLite implements IFachada {
 		
 		return id;
 	}	// idJugador
+	
+	
+	/**
+	 * Devuelve la lista con los cant jugadores de mayor puntaje.
+	 * @param cant La cantidad de jugadores del ranking
+	 * @return
+	 * @throws SQLException 
+	 */
+	@Override
+	public String topNJugadores(int cant) throws SQLException {
+		IConexion icon = ipool.obtenerConexion(true);
+		ArrayList<Jugador> lista;
+		Iterator<Jugador> itrLista;
+		Jugador jug;
+		String id, jNom, strLista = "{ \"ranking\": [ ";
+		int largo;
+		
+		lista = daoJugador.topNJugadores(icon, cant);
+		itrLista = lista.iterator();
+		
+		/* Iterar sobre las partidas y pasarlas a JSON. */
+		while (itrLista.hasNext()) {
+			jug = itrLista.next();
+			id = jug.getId();
+			jNom = jug.getNombre();
+			strLista += jug.enJSON() + ", ";
+		}	// while
+		
+		// Quitar la última coma de la cadena si hay partidas.
+		largo = strLista.length();
+		if (largo > 4) {
+			strLista = strLista.substring(0, largo - 2);
+		}	// if
+		
+		strLista += " ] }";
+		ipool.liberarConexion(icon, true);
+		
+		return strLista;
+	}	// topNJugadores
+	
 	
 		//* De Pesquero. */
 	

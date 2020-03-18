@@ -132,6 +132,9 @@ public class Servidor {
 			case "LOGIN":
 				loginUsuario((String) jObj.get("nombre"), (String) jObj.get("contrasena"), sesion);
 				break;
+			case "TOP_N":
+				topNJugadores((Integer) jObj.get("cant"), sesion);
+				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
 				break;
@@ -266,5 +269,18 @@ public class Servidor {
 		
 		s.getBasicRemote().sendText(resp);
 	}	// loginUsuario
+	
+	/**
+	 * @throws SQLException 
+	 * @throws IOException 
+	 * 
+	 */
+	private void topNJugadores(int cant, Session s) throws SQLException, IOException {
+		String resp = null;
+		
+		resp = facha.topNJugadores(cant);
+		
+		s.getBasicRemote().sendText(resp);
+	}	// topNJugadores
 
 }	/* Servidor */

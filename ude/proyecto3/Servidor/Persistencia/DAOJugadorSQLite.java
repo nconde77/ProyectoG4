@@ -3,16 +3,19 @@ package ude.proyecto3.Servidor.Persistencia;
 //import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ude.proyecto3.Servidor.Logica.FachadaSQLite;
 import ude.proyecto3.Servidor.Logica.Jugador;
+import ude.proyecto3.Servidor.Logica.PartidaCreada;
 import ude.proyecto3.Servidor.Persistencia.Consultas;
 import ude.proyecto3.Servidor.Persistencia.IDAOJugador;
 
@@ -107,9 +110,9 @@ public class DAOJugadorSQLite implements IDAOJugador {
     		j = new Jugador(rs.getString("Id"),
     				rs.getString("Nombre"), 
     				rs.getString("Correo"),
-    				rs.getString("Contrasenia"),
-    				rs.getString("Sal"));
-    		j.sumarPuntos(rs.getLong("Puntaje"));
+    				rs.getString("Contraseña"),
+    				rs.getString("Sal"),
+    				rs.getInt("Puntaje"));
     	}
     	rs.close();
     	pstmt.close();
@@ -149,7 +152,8 @@ public class DAOJugadorSQLite implements IDAOJugador {
     				rs.getString("Nombre"), 
     				rs.getString("Correo"),
     				rs.getString("Contrasenia"),
-    				rs.getString("Sal"));
+    				rs.getString("Sal"),
+    				rs.getInt("Puntaje"));
     		j.sumarPuntos(rs.getLong("Puntaje"));
     		logger.log(Level.INFO, "daoJugador: encontrarId: " + j.enJSON());
     	}
@@ -159,7 +163,45 @@ public class DAOJugadorSQLite implements IDAOJugador {
         return j;
 	}	// encontrarId
 	
-	/*
+	
+	public ArrayList<Jugador> topNJugadores(IConexion icon, int cant) throws SQLException {
+		// Obtener una conexion concreta SQLite a la base.
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
+		PreparedStatement pstmt;
+		ResultSet rs = null;
+		ArrayList<Jugador> lista = new ArrayList<Jugador>();
+		Jugador jug = new Jugador();
+		String query;
+		
+		if (con == null) {
+			throw new SQLException("No hay conexiones disponibles.");
+        }	// if
+        
+    	query = consul.topNJugadores();
+    	pstmt = con.prepareStatement(query);
+        pstmt.setInt(1, cant);
+        rs = pstmt.executeQuery();
+	  	
+        // Cargar la lista desde el result set.
+        while (rs.next()) {
+        	jug.inicializar(jug.getId() ,
+        			jug.getNombre(),
+        			jug.getCorreo(),
+        			jug.getContrasenia(),
+        			jug.getSal(),
+        			jug.getPuntaje());	// No mandamos la sal del hash.
+        	lista.add(jug);
+        }	// while
+        
+	  	rs.close();
+	  	pstmt.close();
+	  	
+		return lista;
+	}	// topNJugadores
+	
+	
+	/**
 	 * Eliminar un jugador por nombre.
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#borrar(ude.proyecto3.Servidor.Persistencia.IConexion, java.lang.String)
 	 */
@@ -183,7 +225,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
         }
 	}	// borrar
 	
-	/*
+	/**
 	 * Retorna true si no hay jugadores guardados en la tabla.
 	 * @see ude.proyecto3.Servidor.Persistencia.IDAOJugador#esVacio(ude.proyecto3.Servidor.Persistencia.IConexion)
 	 */

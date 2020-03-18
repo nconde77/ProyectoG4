@@ -19,6 +19,7 @@ public interface IFachada {
 	public String crearJugador(String nom, String cor, String pas) throws SQLException, FileNotFoundException, IOException;
 	public void actPuntajeJugador(String id, int ptosJPat) throws SQLException;
 	public boolean loginJugador(String nom, String cla) throws SQLException;
+	public String topNJugadores(int cant) throws SQLException;
 	public String idJugador(String nom) throws SQLException;
 	
 	// De vehiculos.
