@@ -222,9 +222,11 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	  	
         // Cargar la lista desde el result set.
         while (rs.next()) {
+        	part.setId(rs.getString("Id"));
+        	part.setNombre(rs.getString("Nombre"));
         	idUsu = rs.getString("IdJPat");
         	
-        	if (idUsu == null) {
+        	if (rs.wasNull()) {
         		bando = "Pesquero";
         		idUsu = rs.getString("IdJPes");
         	}
@@ -233,8 +235,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
         		idUsu = rs.getString("IdJPat");
         	}	// if
         	
-        	part.setId(rs.getString("Id"));
-        	part.setNombre(rs.getString("Nombre"));
         	part.setJugador(idUsu);
         	part.setBando(bando);
         	lista.add(part);

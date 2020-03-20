@@ -46,7 +46,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
             pstmt.setString(3, j.getCorreo());
             pstmt.setString(4, j.getContrasenia());
             pstmt.setString(5, j.getSal());
-            pstmt.setLong(6, j.getPuntaje());
+            pstmt.setInt(6, j.getPuntaje());
             pstmt.executeUpdate();
             pstmt.close();
             // Obtener el id.
@@ -110,7 +110,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
     		j = new Jugador(rs.getString("Id"),
     				rs.getString("Nombre"), 
     				rs.getString("Correo"),
-    				rs.getString("Contraseña"),
+    				rs.getString("Contrasenia"),
     				rs.getString("Sal"),
     				rs.getInt("Puntaje"));
     	}
@@ -154,12 +154,12 @@ public class DAOJugadorSQLite implements IDAOJugador {
     				rs.getString("Contrasenia"),
     				rs.getString("Sal"),
     				rs.getInt("Puntaje"));
-    		j.sumarPuntos(rs.getLong("Puntaje"));
+    		j.sumarPuntos(rs.getInt("Puntaje"));
     		logger.log(Level.INFO, "daoJugador: encontrarId: " + j.enJSON());
     	}
     	rs.close();
     	pstmt.close();
-        
+    	
         return j;
 	}	// encontrarId
 	
@@ -185,12 +185,13 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	  	
         // Cargar la lista desde el result set.
         while (rs.next()) {
-        	jug.inicializar(jug.getId() ,
-        			jug.getNombre(),
-        			jug.getCorreo(),
-        			jug.getContrasenia(),
-        			jug.getSal(),
-        			jug.getPuntaje());	// No mandamos la sal del hash.
+        	logger.log(Level.INFO, " Jugador " + rs.getString("Id"));
+        	jug.setId(rs.getString("Id"));
+        	jug.setNombre(rs.getString("Nombre"));
+        	jug.setCorreo(rs.getString("Correo"));
+        	jug.setContrasenia("");
+        	jug.setSal("");
+        	jug.setPuntaje(rs.getInt("Puntaje"));
         	lista.add(jug);
         }	// while
         
@@ -234,7 +235,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
 		// Obtener una conexion concreta SQLite a la base.
 		ConexionSQLite conSQLite = (ConexionSQLite)icon;
 		Connection con = conSQLite.getConexion();
-		
 		PreparedStatement pstmt;
 		ResultSet rs;
 		String query;

@@ -51,21 +51,37 @@ public class Jugador {
 		return puntaje;
 	}	// getPuntaje
 	
-	public void sumarPuntos(long p) {
+	public void sumarPuntos(int p) {
 		puntaje += p;
 	}	// sumarPuntos
 	
+	public void setId(String i) {
+		id = i;
+	}	// setId
+	
 	public void setNombre(String n) {
 		nombre = n;
-	}	// getNombre
+	}	// setNombre
 	
 	public void setCorreo(String c) {
 		correo = c;
-	}	// getNombre
+	}	// setCorreo
+	
+	public void setContrasenia(String c) {
+		contrasenia = c;
+	}	// setContrasenia
+	
+	public void setSal(String s) {
+		sal = s;
+	}	// setSal
+	
+	public void setPuntaje(int p) {
+		puntaje = p;
+	}	// setPuntaje
 	
 	public String enJSON() {
-		return "{ \"id\": \"" + id + "\", \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo + "\", \"contraseña\": " +
-				contrasenia + "\", \"sal\": \"" + sal + "\", \"puntaje\": " + puntaje + " }";
+		return "{ \"id\": \"" + id + "\", \"nombre\": \"" + nombre + "\", \"correo\": \"" + correo +
+				"\", \"contrasena\": \"" + contrasenia + "\", \"sal\": \"" + sal + "\", \"puntaje\": " + puntaje + " }";
 	}	// toJson
 	
 }	/* Jugador */

@@ -35,26 +35,14 @@ public class Consultas {
 		return "INSERT INTO Pesqueros VALUES (?, \"Lancha\", ?, ?, ?, ?, ?)"; 
 	}	// guardarLancha
 	
-	/**
-	* Insertar 
-	* @return Devuelve el identificador de la partida guardada.
-	*/
 	public String guardarOPVPesado() {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)";
 	}	// guardarOPVPesado
 	
-	/**
-	* Insertar 
-	* @return Devuelve el identificador de la partida guardada.
-	*/
 	public String guardarOPVLigero() {
 		return "INSERT INTO Partidas VALUES (?, ?, ?, ?, ?)"; 
 	}	// guardarOPVLigero
 	
-
-	/**
-	 * Insertar un jugador.
-	 */
 	public String guardarJugador() {
 		return "INSERT INTO Jugadores VALUES (?, ?, ?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
@@ -72,7 +60,7 @@ public class Consultas {
 	 * Listar los top ? jugadores.
 	 */
 	public String topNJugadores() {
-		return "SELECT Nombre, Puntaje FROM Jugadores ORDER BY Puntaje LIMIT ?";
+		return "SELECT * FROM Jugadores ORDER BY Puntaje DESC LIMIT ?";
 	}	// darUsuarioPorNombre
 	
 	/**

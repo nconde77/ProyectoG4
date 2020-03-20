@@ -43,13 +43,15 @@ public class Servidor {
 	// Para poder loguear.
 	Logger logger = Logger .getLogger(Servidor.class.getName());
 	
-	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
+	//private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
+	private HashMap<String, ParSesiones> partidas = new HashMap<String, ParSesiones>();
 	
 	private IFachada facha;
 	
 	static final int PE_MAX_COMB = 100;
 	static final int PA_MAX_COMB = 100;
 	static final int MAX_TIEMPO  = 180;	// 180 s = 3 min.
+	static final String pongui = "{ \"tipo\": \"pong\" }";
 	
 	/*
 	 * Servidor.
@@ -77,7 +79,7 @@ public class Servidor {
 	@OnOpen
 	public void alAbrir(Session sesion) {
 		logger.log(Level.INFO, "Abriendo sesión " + sesion.getId() + ".");
-		sesiones.add(sesion);
+//		sesiones.add(sesion);
 	}	// alAbrir
 	
 	/*
@@ -90,6 +92,7 @@ public class Servidor {
 	public void cuandoMensaje(Session sesion, String mensaje) throws SQLException, ParseException, IOException {
 		JSONParser jParser = new JSONParser();
 		JSONObject jObj;
+		int c;
 		
 		logger.log(Level.INFO, "Mensaje " + mensaje + " de " + sesion.getId() + ".\n");
 		/* Se cambió de clase para parsear a json-simple en vez de Gson
@@ -98,21 +101,28 @@ public class Servidor {
 		jObj = (JSONObject) jParser.parse(mensaje);
 		
 		switch ((String) jObj.get("tipo")) {
-			case "CAPTURAP1": case "CAPTURAP2": case "CAPTURAP3": case "CAPTURAP4":
+			case "CAPTURAP1":   case "CAPTURAP2":
+			case "CAPTURAP3":   case "CAPTURAP4":
 			case "COMBUSTIBLE": case "DISPARO":
-			case "MOVIMIENTO": case "PAUSA":
-			case "PECES": case "AVISOS":
-			case "REANUDAR": case "TORMENTA":
+			case "MOVIMIENTO":  case "PAUSA":
+			case "PECES":       case "AVISOS":
+			case "REANUDAR":    case "TORMENTA":
 			case "TIEMPO":
-				for (Session s : sesiones) {
-					if (!s.equals(sesion)) {
-						// logger.log(Level.INFO, "Sesión " + s.getId() + ".\n");
-						s.getBasicRemote().sendText(mensaje);
-					}	// if
-				}	// for
+				// Solamente reenvio el mensaje al otro jugador.
+				if (((String) jObj.get("bando")).equals("OPV")) {
+					partidas.get((String) jObj.get("pid")).getSesionPes().getBasicRemote().sendText(mensaje);
+				}
+				else {
+					partidas.get((String) jObj.get("pid")).getSesionPat().getBasicRemote().sendText(mensaje);
+				}	// if
+
 				break;
 			case "CREA_PART":
 				crearPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"),
+						(String) jObj.get("bando"), sesion);
+				break;
+			case "EN_ESP":
+				ponerEnEspera((String) jObj.get("uid"), (String) jObj.get("pid"),
 						(String) jObj.get("bando"), sesion);
 				break;
 			case "UNI_PART":
@@ -132,8 +142,16 @@ public class Servidor {
 			case "LOGIN":
 				loginUsuario((String) jObj.get("nombre"), (String) jObj.get("contrasena"), sesion);
 				break;
+			case "INI_JUEGO":
+				iniciarJuego((String) jObj.get("pid"), (String) jObj.get("bando"), sesion);
+				break;
 			case "TOP_N":
-				topNJugadores((Integer) jObj.get("cant"), sesion);
+				/*c = ((Long) jObj.get("cant")).intValue();
+				topNJugadores(c, sesion);*/
+				break;
+			case "ping":
+				logger.log(Level.INFO, "ping - pong");
+				sesion.getBasicRemote().sendText(pongui);
 				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
@@ -151,7 +169,7 @@ public class Servidor {
 	@OnClose
 	public void alCerrar(Session sesion, CloseReason cr) {
 		logger.log(Level.INFO, "Cerrando sesión " + sesion.getId() + " por " + cr.toString() + ".\n");
-		sesiones.remove(sesion);
+//		sesiones.remove(sesion);
 	}	// alCerrar
 	
 	
@@ -162,20 +180,51 @@ public class Servidor {
 	 */
 	public void crearPartida(String nom, String jug, String bando, Session s)
 			throws SQLException, FileNotFoundException, IOException {
-		String id = null;
-		String resp = "{ pid: \"";
+		ParSesiones paSe = new ParSesiones();
+		String pid = null;
+		String resp = "{ \"pid\": \"";
 		
-		id = facha.crearPartida(nom, jug, bando);
+		pid = facha.crearPartida(nom, jug, bando);
 		
-		if (id != null) {
-			resp += id + "\" }";
-		}
-		else {
+		if (pid.equals(null)) {
 			resp += "-1\" }";
 		}
+		else {
+			resp += pid + "\" }";
+			partidas.put(pid, paSe);
+		}	// if
 		
 		s.getBasicRemote().sendText(resp);
 	}	// crearPartida
+	
+	
+	/**
+	 * Poner a esperar una partida creada.
+	 * @param uid
+	 * @param pid
+	 * @param bando
+	 * @throws IOException 
+	 */
+	public void ponerEnEspera(String uid, String pid, String bando, Session s) throws IOException {
+		ParSesiones paSe = new ParSesiones();
+		
+		logger.log(Level.INFO, " en espera Pat: " + uid + " " + pid + " " + bando + " " + s);
+		logger.log(Level.INFO, " en espera Pat: partidas.get(" + pid + ").setSesionPat(" + s + ")");
+		
+		if (bando.equals("OPV")) {
+			logger.log(Level.INFO, " setear sesión OPV...");
+			paSe.setSesionPat(s);
+			logger.log(Level.INFO, " hecho.");
+		}
+		else {
+			logger.log(Level.INFO, " setear sesión Pes...");
+			paSe.setSesionPes(s);
+			logger.log(Level.INFO, " hecho.");
+		}	// if
+		
+		partidas.replace(pid, paSe);
+		s.getBasicRemote().sendText(pongui);
+	}	// ponerEnEspera
 	
 	/**
 	 * Unir el usuario uid a una partida creada (pid) en el bando que falta.
@@ -183,10 +232,21 @@ public class Servidor {
 	 * @throws IOException 
 	 */
 	public void unirseAPartida(String pid, String uid, Session s) throws SQLException, IOException {
-		String mensaje = null;
+		String mArrancar = "{ \"tipo\": \"ARRANCAR\" }";
 		
 		facha.unirseAPartida(pid, uid);
-		s.getBasicRemote().sendText(mensaje);
+		
+		// Guardar la sesión del nuevo y avisar al que esperaba que empieza el juego.
+		if (partidas.get(pid).getSesionPat() == null) {
+			partidas.get(pid).setSesionPat(s);
+			partidas.get(pid).getSesionPes().getBasicRemote().sendText(mArrancar);
+		}
+		else {
+			partidas.get(pid).setSesionPes(s);
+			partidas.get(pid).getSesionPat().getBasicRemote().sendText(mArrancar);
+		}	// if
+		
+		s.getBasicRemote().sendText(mArrancar);
 	}	// unirseAPartida
 	
 	/**
@@ -242,7 +302,7 @@ public class Servidor {
 	 */
 	private void altaUsuario(String nom, String cor, String pas, Session s) throws FileNotFoundException, SQLException, IOException {
 		String id = null;
-		String resp = "{\"registro\": ";
+		String resp = "{ \"registro\": ";
 		
 		id = facha.crearJugador(nom, cor, pas);
 		
@@ -257,7 +317,7 @@ public class Servidor {
 	}	// altaUsuario
 	
 	private void loginUsuario(String nom, String cla, Session s) throws IOException, SQLException {
-		String resp = "{\"login\": ";
+		String resp = "{ \"login\": ";
 		String uid = facha.idJugador(nom);
 		
 		if (facha.loginJugador(nom, cla)) {
@@ -270,15 +330,31 @@ public class Servidor {
 		s.getBasicRemote().sendText(resp);
 	}	// loginUsuario
 	
+	public void iniciarJuego(String pid, String bando, Session s) throws IOException {
+		ParSesiones paSe;
+		String arranca = "{ \"tipo\": \"ARRANCAR\" }";
+		
+		if (bando.equals("OPV")) {
+			partidas.get(pid).setSesionPat(s);
+		}
+		else {
+			partidas.get(pid).setSesionPes(s);
+		}	// if
+		
+		paSe = partidas.get(pid);
+		paSe.getSesionPat().getBasicRemote().sendText(arranca);
+		paSe.getSesionPes().getBasicRemote().sendText(arranca);
+	}	// iniciarJuego
+	
 	/**
 	 * @throws SQLException 
 	 * @throws IOException 
-	 * 
 	 */
-	private void topNJugadores(int cant, Session s) throws SQLException, IOException {
+	private void topNJugadores(Integer cant, Session s) throws SQLException, IOException {
 		String resp = null;
+		logger.log(Level.FINER, "topNJugadores: " + cant.intValue());
 		
-		resp = facha.topNJugadores(cant);
+		resp = facha.topNJugadores(cant.intValue());
 		
 		s.getBasicRemote().sendText(resp);
 	}	// topNJugadores

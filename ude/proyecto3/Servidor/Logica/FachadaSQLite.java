@@ -119,20 +119,19 @@ public class FachadaSQLite implements IFachada {
 	 */
 	@Override
 	public void unirseAPartida(String pid, String uid) throws SQLException {
-		IConexion con = ipool.obtenerConexion(true);
-		Partida part;
+		IConexion con;
+		Partida part = partidas.get(pid);
 		
-		part = partidas.get(pid);
-		if (part.getJPat() == null) {
+		if (part.getJPat().equals(null)) {
 			part.setJugadorPatrullero(uid);
 		}
 		else {
 			part.setJugadorPesquero(uid);
 		}	// if
 		
+		con = ipool.obtenerConexion(true);
 		part = daoPartida.encontrar(con, pid);
 		part.setEstado(EstadoPartida.INICIADA);
-		
 		ipool.liberarConexion(con, true);
 	}	// unirseAPartida
 	
@@ -143,8 +142,10 @@ public class FachadaSQLite implements IFachada {
 	 */
 	@Override
 	public void iniciarPartida(String id, String estado) throws SQLException {
-		IConexion con = ipool.obtenerConexion(true);
+		IConexion con;
 		Partida part;
+		
+		con = ipool.obtenerConexion(true);
 		part = daoPartida.encontrar(con, id);
 		part.setEstado(EstadoPartida.INICIADA);
 		ipool.liberarConexion(con, true);
@@ -153,6 +154,7 @@ public class FachadaSQLite implements IFachada {
 	@Override
 	public void pausarPartida(Partida part) throws FileNotFoundException, IOException { //String nom, String estado
 		IConexion con = ipool.obtenerConexion(true);
+		
 		daoPartida.guardar(con, part);
 		//De alguna manera necesito acceder a la pantalla de inicio
 		ipool.liberarConexion(con, true);
@@ -198,9 +200,10 @@ public class FachadaSQLite implements IFachada {
 		/* Iterar sobre las partidas y pasarlas a JSON. */
 		while (itrLista.hasNext()) {
 			part = itrLista.next();
+			// Cambiar el id del creador por su nombre y agregar la partida al resultado
 			id = part.getJugador();
-			jNom = daoJugador.encontrarId(icon, id).getNombre();
-			part.setJugador(jNom);
+			//jNom = daoJugador.encontrarId(icon, id).getNombre();
+			//part.setJugador(jNom);
 			strLista += part.enJSON() + ", ";
 		}	// while
 		
@@ -275,6 +278,7 @@ public class FachadaSQLite implements IFachada {
 	 * Dar el Id de un Jugador por nombre.
 	 * @throws SQLException 
 	 */
+	@Override
 	public String idJugador(String nom) throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
 		Jugador j = null;
@@ -299,22 +303,25 @@ public class FachadaSQLite implements IFachada {
 	public String topNJugadores(int cant) throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
 		ArrayList<Jugador> lista;
-		Iterator<Jugador> itrLista;
+//		Iterator<Jugador> itrLista;
 		Jugador jug;
 		String id, jNom, strLista = "{ \"ranking\": [ ";
-		int largo;
+		int i, largo, ult;
 		
 		lista = daoJugador.topNJugadores(icon, cant);
-		itrLista = lista.iterator();
+//		itrLista = lista.iterator();
+		ult = lista.size();
+		logger.log(Level.INFO, " Cantidad de jugadores: " + ult);
 		
 		/* Iterar sobre las partidas y pasarlas a JSON. */
-		while (itrLista.hasNext()) {
-			jug = itrLista.next();
-			id = jug.getId();
-			jNom = jug.getNombre();
+		for (i = 0; i < ult; i++) {
+			jug = lista.get(i);
+			logger.log(Level.INFO, " topNJugadores: " + jug.enJSON());
 			strLista += jug.enJSON() + ", ";
 		}	// while
-		
+
+		logger.log(Level.INFO, "\n topNJugadores: strLista: " + strLista);
+
 		// Quitar la última coma de la cadena si hay partidas.
 		largo = strLista.length();
 		if (largo > 4) {
