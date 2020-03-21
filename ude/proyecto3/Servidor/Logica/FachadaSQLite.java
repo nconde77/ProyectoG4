@@ -37,7 +37,7 @@ import ude.proyecto3.Servidor.Logica.IFachada;
 
 public class FachadaSQLite implements IFachada {
 	Logger logger = Logger.getLogger(FachadaSQLite.class.getName());
-	// El conjunto de partidas en el sistema, indizadas por nombre.
+	// El conjunto de partidas en el sistema, indizadas por Id.
 	private HashMap<String, Partida> partidas = new HashMap<String, Partida>();
 	
 	private String cataHome, db_driver, db_factory, db_url, dirIP;
@@ -96,7 +96,6 @@ public class FachadaSQLite implements IFachada {
 		}	// if
 		
 		ipool.liberarConexion(icon, true);
-		partidas.put(nom, part);
 		
 		return id;
 	}	// crearPartida
@@ -119,20 +118,33 @@ public class FachadaSQLite implements IFachada {
 	 */
 	@Override
 	public void unirseAPartida(String pid, String uid) throws SQLException {
+		logger.log(Level.INFO, " unirseAPartida inicio.\n ==> pid: " + pid + "\n ==> uid: " + uid);
 		IConexion con;
-		Partida part = partidas.get(pid);
+		Partida part = new Partida();
 		
-		if (part.getJPat().equals(null)) {
-			part.setJugadorPatrullero(uid);
+		part = partidas.get(pid);
+		if (part != null) {
+			logger.log(Level.INFO, " hay partida " + pid);
+			if (part.getJPat().equals(null)) {
+				logger.log(Level.INFO, " unirseAPartida seteo OPV.");
+				part.setJugadorPatrullero(uid);
+			}
+			else {
+				logger.log(Level.INFO, " unirseAPartida seteo Pesq.");
+				part.setJugadorPesquero(uid);
+			}	// if
+		
+			logger.log(Level.INFO, " unirseAPartida -> persistencia.");
+			con = ipool.obtenerConexion(true);
+			part = daoPartida.encontrar(con, pid);
+			part.setEstado(EstadoPartida.INICIADA);
+			partidas.replace(pid, part);
+			ipool.liberarConexion(con, true);
+			logger.log(Level.INFO, " unirseAPartida fin.");
 		}
 		else {
-			part.setJugadorPesquero(uid);
+			logger.log(Level.INFO, " unirseAPartida part es NULL.");
 		}	// if
-		
-		con = ipool.obtenerConexion(true);
-		part = daoPartida.encontrar(con, pid);
-		part.setEstado(EstadoPartida.INICIADA);
-		ipool.liberarConexion(con, true);
 	}	// unirseAPartida
 	
 	/**
@@ -216,8 +228,6 @@ public class FachadaSQLite implements IFachada {
 		strLista += " ] }";
 		ipool.liberarConexion(icon, true);
 		
-		logger.log(Level.INFO, "facha: partidasCreadas: respuesta \n" + strLista);
-		
 		return strLista;
 	}	// partidasCreadas
 	
@@ -253,7 +263,16 @@ public class FachadaSQLite implements IFachada {
 	 */
 	@Override
 	public void actPuntajeJugador(String id, int ptosJugador) throws SQLException {
+		IConexion icon = ipool.obtenerConexion(true);
+		Jugador j = null;
+		boolean res = false;
 		
+		j = daoJugador.encontrarId(icon, id);
+		if (j != null) {
+			daoJugador.actualizarPuntaje(icon, id, ptosJugador);
+		}	// if
+		
+		ipool.liberarConexion(icon, true);
 	}	// actPuntajeJugador
 	
 	/**
@@ -303,13 +322,13 @@ public class FachadaSQLite implements IFachada {
 	public String topNJugadores(int cant) throws SQLException {
 		IConexion icon = ipool.obtenerConexion(true);
 		ArrayList<Jugador> lista;
-//		Iterator<Jugador> itrLista;
+		Iterator<Jugador> itrLista;
 		Jugador jug;
 		String id, jNom, strLista = "{ \"ranking\": [ ";
 		int i, largo, ult;
 		
 		lista = daoJugador.topNJugadores(icon, cant);
-//		itrLista = lista.iterator();
+		itrLista = lista.iterator();
 		ult = lista.size();
 		logger.log(Level.INFO, " Cantidad de jugadores: " + ult);
 		
@@ -340,6 +359,7 @@ public class FachadaSQLite implements IFachada {
 	/**
 	 * Agregar un pesquero fábrica.
 	 */
+	@Override
 	public String crearPesqueroFabrica(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
 		PesqueroFabrica p;
@@ -355,6 +375,7 @@ public class FachadaSQLite implements IFachada {
 	/**
 	 * Agregar un pesquero ligero.
 	 */
+	@Override
 	public String crearPesqueroLigero(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
 		PesqueroLigero p;
@@ -372,6 +393,7 @@ public class FachadaSQLite implements IFachada {
 	/**
 	 * Agregar un patrullero ligero.
 	 */
+	@Override
 	public String crearOPVLigero(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
 		OPVLigero o;
@@ -387,6 +409,7 @@ public class FachadaSQLite implements IFachada {
 	/**
 	 * Agregar un patrullero pesado.
 	 */
+	@Override
 	public String crearOPVPesado(int a, int r, int x, int y, int e) throws SQLException, FileNotFoundException, IOException {
 		IConexion icon = ipool.obtenerConexion(true);
 		OPVPesado o;

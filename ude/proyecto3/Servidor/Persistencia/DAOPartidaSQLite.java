@@ -209,7 +209,6 @@ public class DAOPartidaSQLite implements IDAOPartida {
 		ResultSet rs = null;
 		String query, bando, idUsu;
 		ArrayList<PartidaCreada> lista = new ArrayList<PartidaCreada>();
-		PartidaCreada part = new PartidaCreada();
 		
 		if (con == null) {
 			throw new SQLException("No hay conexiones disponibles.");
@@ -222,6 +221,7 @@ public class DAOPartidaSQLite implements IDAOPartida {
 	  	
         // Cargar la lista desde el result set.
         while (rs.next()) {
+        	PartidaCreada part = new PartidaCreada();
         	part.setId(rs.getString("Id"));
         	part.setNombre(rs.getString("Nombre"));
         	idUsu = rs.getString("IdJPat");

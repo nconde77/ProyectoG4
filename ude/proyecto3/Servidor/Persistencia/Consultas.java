@@ -47,6 +47,10 @@ public class Consultas {
 		return "INSERT INTO Jugadores VALUES (?, ?, ?, ?, ?, ?)";
 	}	// darUsuarioPorNombre
 	
+	public String actPuntosJugador() {
+		return "UPDATE Jugadores SET Puntaje = ? WHERE Id = ?";
+	}
+	
 	
 			/** Listas de elementos **/
 	/**
@@ -54,14 +58,14 @@ public class Consultas {
 	 */
 	public String listarJugadores() {
 		return "SELECT Id, Nombre FROM Jugadores ORDER BY Id";
-	}	// darUsuarioPorNombre
+	}	// listarJugadores
 	
 	/**
 	 * Listar los top ? jugadores.
 	 */
 	public String topNJugadores() {
 		return "SELECT * FROM Jugadores ORDER BY Puntaje DESC LIMIT ?";
-	}	// darUsuarioPorNombre
+	}	// topNJugadores
 	
 	/**
 	 * Listar por Id en la tabla que se indique.

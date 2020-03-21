@@ -4,9 +4,9 @@ import ude.proyecto3.Servidor.Logica.Pesquero;
 
 public class PesqueroFabrica extends Pesquero {
 	
-	public PesqueroFabrica(String id, float a, float r, float posx, float posy, int e)
+	public PesqueroFabrica(String i, float a, float r, float posx, float posy, int e)
 	{
-		super (id, a, r, posx, posy, e);		
+		super (i, a, r, posx, posy, e);		
 	}	// PesqueroFabrica
 
 }	/* PesqueroFabrica */

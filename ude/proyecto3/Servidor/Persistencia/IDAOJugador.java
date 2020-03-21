@@ -16,4 +16,5 @@ public interface IDAOJugador {
 	public ArrayList<Jugador> topNJugadores(IConexion icon, int cant) throws SQLException;
 	public void borrar(IConexion icon, String s) throws SQLException;
 	public boolean esVacio(IConexion icon) throws SQLException;
+	void actualizarPuntaje(IConexion icon, String uid, int p) throws SQLException;
 }	/* IDAOJugador */

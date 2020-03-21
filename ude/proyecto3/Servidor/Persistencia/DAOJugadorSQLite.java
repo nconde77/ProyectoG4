@@ -113,7 +113,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
     				rs.getString("Contrasenia"),
     				rs.getString("Sal"),
     				rs.getInt("Puntaje"));
-    	}
+    	}	// if
     	rs.close();
     	pstmt.close();
         
@@ -171,7 +171,6 @@ public class DAOJugadorSQLite implements IDAOJugador {
 		PreparedStatement pstmt;
 		ResultSet rs = null;
 		ArrayList<Jugador> lista = new ArrayList<Jugador>();
-		Jugador jug = new Jugador();
 		String query;
 		
 		if (con == null) {
@@ -185,6 +184,7 @@ public class DAOJugadorSQLite implements IDAOJugador {
 	  	
         // Cargar la lista desde el result set.
         while (rs.next()) {
+        	Jugador jug = new Jugador();
         	logger.log(Level.INFO, " Jugador " + rs.getString("Id"));
         	jug.setId(rs.getString("Id"));
         	jug.setNombre(rs.getString("Nombre"));
@@ -253,5 +253,33 @@ public class DAOJugadorSQLite implements IDAOJugador {
         
         return aux;
 	}	// esVacio
+	
+	/**
+	 * @throws SQLException 
+	 * 
+	 */
+	@Override
+	public void actualizarPuntaje(IConexion icon, String uid, int p) throws SQLException {
+        Jugador j = encontrarId(icon, uid);
+		// Obtener una conexion concreta SQLite a la base.
+		ConexionSQLite conSQLite = (ConexionSQLite)icon;
+		Connection con = conSQLite.getConexion();
+		
+		PreparedStatement pstmt;
+		ResultSet rs;
+		String query;
+        
+        if (con == null) {
+        	throw new SQLException("No hay conexiones disponibles.");
+        }
+        
+    	query = consul.actPuntosJugador();
+    	pstmt = con.prepareStatement(query);
+    	pstmt.setInt(1, j.getPuntaje() + p);
+    	pstmt.setString(2, uid);
+    	rs = pstmt.executeQuery();
+		logger.log(Level.INFO, "daoJugador: encontrarId: " + j.enJSON());
+		pstmt.close();
 
+	}	// actualizarPuntaje
 }	/* DAOJugador */

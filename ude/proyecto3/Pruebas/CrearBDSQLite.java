@@ -60,6 +60,19 @@ public class CrearBDSQLite {
 			System.out.println("Update 3: " + sql);
 			stmt.executeUpdate(sql);
 			
+			/* Tabla de Vehículos ligeros. */
+			sql = "CREATE TABLE VLigeros " +
+					"(Id    VARCHAR PRIMARY KEY NOT NULL," +
+					" Tipo  VARCHAR,"  +
+					" IdHel VARCHAR,"  +
+					" Angulo   REAL NOT NULL," +
+					" Rotacion REAL NOT NULL," +
+					" PosX     REAL NOT NULL," +
+					" PosY     REAL NOT NULL," +
+					" Energia  REAL NOT NULL);";
+			System.out.println("Update 3: " + sql);
+			stmt.executeUpdate(sql);
+			
 			/* Tabla de Partidas. */
 			sql = "CREATE TABLE Partidas " +
 					"(Id    VARCHAR PRIMARY KEY NOT NULL," +

@@ -1,5 +1,7 @@
 package ude.proyecto3.Servidor.Logica;
 
+import java.util.UUID;
+
 public abstract class Vehiculo {
 	private float angulo, rotacion, posX, posY;
 	private String id;

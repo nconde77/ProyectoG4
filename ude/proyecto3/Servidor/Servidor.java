@@ -6,7 +6,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,15 +42,13 @@ public class Servidor {
 	// Para poder loguear.
 	Logger logger = Logger .getLogger(Servidor.class.getName());
 	
-	//private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
 	private HashMap<String, ParSesiones> partidas = new HashMap<String, ParSesiones>();
-	
+	private static Set<Session> sesiones = Collections.synchronizedSet(new HashSet<Session>());
 	private IFachada facha;
 	
 	static final int PE_MAX_COMB = 100;
 	static final int PA_MAX_COMB = 100;
 	static final int MAX_TIEMPO  = 180;	// 180 s = 3 min.
-	static final String pongui = "{ \"tipo\": \"pong\" }";
 	
 	/*
 	 * Servidor.
@@ -79,7 +76,7 @@ public class Servidor {
 	@OnOpen
 	public void alAbrir(Session sesion) {
 		logger.log(Level.INFO, "Abriendo sesión " + sesion.getId() + ".");
-//		sesiones.add(sesion);
+		sesiones.add(sesion);
 	}	// alAbrir
 	
 	/*
@@ -109,13 +106,12 @@ public class Servidor {
 			case "REANUDAR":    case "TORMENTA":
 			case "TIEMPO":
 				// Solamente reenvio el mensaje al otro jugador.
-				if (((String) jObj.get("bando")).equals("OPV")) {
-					partidas.get((String) jObj.get("pid")).getSesionPes().getBasicRemote().sendText(mensaje);
-				}
-				else {
-					partidas.get((String) jObj.get("pid")).getSesionPat().getBasicRemote().sendText(mensaje);
-				}	// if
-
+				for (Session s : sesiones) {
+					logger.log(Level.FINER, "mesaje: " + mensaje + "a sesión " + s);
+					if (!s.equals(sesion)) {
+						s.getBasicRemote().sendText(mensaje);
+					}	//
+				}	//	
 				break;
 			case "CREA_PART":
 				crearPartida((String) jObj.get("nombre"), (String) jObj.get("jugador"),
@@ -134,6 +130,8 @@ public class Servidor {
 				listarPartidasCreadas(sesion);
 				break;
 			case "FIN_PART":
+				c = ((Long) jObj.get("puntaje")).intValue();
+				terminarPartida((String) jObj.get("uid"), c, sesion );
 				break;
 			case "ALTA_USU":
 				altaUsuario((String) jObj.get("nombre"), (String) jObj.get("correo"),
@@ -146,12 +144,8 @@ public class Servidor {
 				iniciarJuego((String) jObj.get("pid"), (String) jObj.get("bando"), sesion);
 				break;
 			case "TOP_N":
-				/*c = ((Long) jObj.get("cant")).intValue();
-				topNJugadores(c, sesion);*/
-				break;
-			case "ping":
-				logger.log(Level.INFO, "ping - pong");
-				sesion.getBasicRemote().sendText(pongui);
+				c = ((Long) jObj.get("cant")).intValue();
+				topNJugadores(c, sesion);
 				break;
 			default:
 				logger.log(Level.WARNING, "Mensaje desconocido " + mensaje + ".\n");
@@ -169,7 +163,7 @@ public class Servidor {
 	@OnClose
 	public void alCerrar(Session sesion, CloseReason cr) {
 		logger.log(Level.INFO, "Cerrando sesión " + sesion.getId() + " por " + cr.toString() + ".\n");
-//		sesiones.remove(sesion);
+		sesiones.remove(sesion);
 	}	// alCerrar
 	
 	
@@ -189,7 +183,7 @@ public class Servidor {
 		if (pid.equals(null)) {
 			resp += "-1\" }";
 		}
-		else {
+		else {	// Hay partida
 			resp += pid + "\" }";
 			partidas.put(pid, paSe);
 		}	// if
@@ -208,22 +202,17 @@ public class Servidor {
 	public void ponerEnEspera(String uid, String pid, String bando, Session s) throws IOException {
 		ParSesiones paSe = new ParSesiones();
 		
-		logger.log(Level.INFO, " en espera Pat: " + uid + " " + pid + " " + bando + " " + s);
-		logger.log(Level.INFO, " en espera Pat: partidas.get(" + pid + ").setSesionPat(" + s + ")");
-		
-		if (bando.equals("OPV")) {
-			logger.log(Level.INFO, " setear sesión OPV...");
+		if (bando.equals("Patrullero")) {
+			logger.log(Level.INFO, " setear sesión OPV... " + s);
 			paSe.setSesionPat(s);
-			logger.log(Level.INFO, " hecho.");
 		}
 		else {
-			logger.log(Level.INFO, " setear sesión Pes...");
+			logger.log(Level.INFO, " setear sesión Pes... " + s);
 			paSe.setSesionPes(s);
-			logger.log(Level.INFO, " hecho.");
 		}	// if
-		
+		logger.log(Level.INFO, " hecho.\n" +
+			" jug. en espera, bando: " + bando + ", sesión: " + s + " partida: " + pid);
 		partidas.replace(pid, paSe);
-		s.getBasicRemote().sendText(pongui);
 	}	// ponerEnEspera
 	
 	/**
@@ -232,21 +221,31 @@ public class Servidor {
 	 * @throws IOException 
 	 */
 	public void unirseAPartida(String pid, String uid, Session s) throws SQLException, IOException {
+		ParSesiones paSe = new ParSesiones();
 		String mArrancar = "{ \"tipo\": \"ARRANCAR\" }";
 		
-		facha.unirseAPartida(pid, uid);
+		//facha.unirseAPartida(pid, uid);
+		logger.log(Level.INFO, " part. unirse, despues de facha: " + pid);
 		
-		// Guardar la sesión del nuevo y avisar al que esperaba que empieza el juego.
-		if (partidas.get(pid).getSesionPat() == null) {
-			partidas.get(pid).setSesionPat(s);
-			partidas.get(pid).getSesionPes().getBasicRemote().sendText(mArrancar);
-		}
-		else {
-			partidas.get(pid).setSesionPes(s);
-			partidas.get(pid).getSesionPat().getBasicRemote().sendText(mArrancar);
-		}	// if
+//		paSe = partidas.get(pid);
+//		// Guardar la sesión del nuevo y avisar al que esperaba que empieza el juego.
+//		if (paSe.getSesionPat() == null) {
+//			logger.log(Level.INFO, " part. unirse, Pat 1: " + pid);
+//			paSe.setSesionPat(s);
+//			logger.log(Level.INFO, " part. unirse, Pat 2: " + pid);
+//		}
+//		else {
+//			logger.log(Level.INFO, " part. unirse, Pes 1: " + pid);
+//			paSe.setSesionPes(s);
+//			logger.log(Level.INFO, " part. unirse, Pes 2: " + pid);
+//		}	// if
 		
-		s.getBasicRemote().sendText(mArrancar);
+		logger.log(Level.INFO, " part. unirse, mensajes de arranque: " + pid);
+		paSe.getSesionPat().getBasicRemote().sendText(mArrancar);
+		paSe.getSesionPes().getBasicRemote().sendText(mArrancar);
+		logger.log(Level.INFO, " part. unirse, mensajes de arranque enviados: " + pid);
+		
+		partidas.replace(pid, paSe);
 	}	// unirseAPartida
 	
 	/**
@@ -261,6 +260,7 @@ public class Servidor {
 		String lista = null;
 		
 		lista = facha.partidasCreadas();
+		logger.log(Level.INFO, " partidasCreadas:\n" + lista);
 		
 		s.getBasicRemote().sendText(lista);
 	}	//listarPartida
@@ -269,8 +269,6 @@ public class Servidor {
 	}	// guardarPartida
 	
 	
-	public void iniciarPartida(String id, String estado, Session s) throws SQLException {
-	}	// iniciarPartida
 	
 	/**
 	 * Pausar una partida iniciada.
@@ -287,7 +285,8 @@ public class Servidor {
 	 * @param id  El identificador de la partida a terminar.
 	 * @param est Estado actual de la partida a terminar.
 	 */
-	public void terminarPartida(String id, String est) throws SQLException {
+	public void terminarPartida(String uid, int p, Session s) throws SQLException {
+		facha.actPuntajeJugador(uid, p);
 	}	// terminarPartida
 	
 	/**
@@ -306,11 +305,11 @@ public class Servidor {
 		
 		id = facha.crearJugador(nom, cor, pas);
 		
-		if (id == null) {
-			resp += "\"false\" }";
+		if (id.equals(null)) {
+			resp += "false }";
 		}
 		else {
-			resp += "\"true\" }";
+			resp += "true }";
 		}	// if
 		
 		s.getBasicRemote().sendText(resp);
@@ -324,26 +323,19 @@ public class Servidor {
 			resp += "true, \"uid\": \"" + uid + "\" }";
 		}
 		else {
-			resp += "false }";
+			resp += "false, \"uid\": \"-1\" }";
 		}	// if
 		
 		s.getBasicRemote().sendText(resp);
 	}	// loginUsuario
 	
 	public void iniciarJuego(String pid, String bando, Session s) throws IOException {
-		ParSesiones paSe;
+		ParSesiones paSe = new ParSesiones();
 		String arranca = "{ \"tipo\": \"ARRANCAR\" }";
 		
-		if (bando.equals("OPV")) {
-			partidas.get(pid).setSesionPat(s);
-		}
-		else {
-			partidas.get(pid).setSesionPes(s);
-		}	// if
-		
-		paSe = partidas.get(pid);
-		paSe.getSesionPat().getBasicRemote().sendText(arranca);
-		paSe.getSesionPes().getBasicRemote().sendText(arranca);
+//		paSe = partidas.get(pid);
+//		paSe.getSesionPat().getBasicRemote().sendText(arranca);
+//		paSe.getSesionPes().getBasicRemote().sendText(arranca);
 	}	// iniciarJuego
 	
 	/**
